@@ -4,6 +4,9 @@ from typing import Annotated
 import app.models as models
 from app.database import engine, SessionLocal
 from sqlalchemy.orm import Session
+import io
+from PIL import Image
+import base64
 
 app = FastAPI()
 
@@ -27,6 +30,17 @@ dp_dependency = Annotated[Session, Depends(get_db)]
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+@app.get("/login")
+async def login(image_data: str):
+    image_data = image_data.replace("data:image/jpeg;base64,", "")
+    image_bytes = base64.b64decode(image_data)
+    image = Image.open(io.BytesIO(image_bytes))
+
+    # TODO: use image to get student id
+    # ofc, fail if student id is not found
+    student_id = "12345678"
+    return {"student_id": student_id}
 
 # route for successful login
 
