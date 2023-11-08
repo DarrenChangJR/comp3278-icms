@@ -16,6 +16,8 @@ const Login = () => {
   const { breakpoints } = useTheme()
   const isMobile = useMediaQuery(breakpoints.down('md'))
   const [startCam, setStartCam] = useState(false)
+  const [stopCam, setStopCam] = useState(false)
+  const [imageDataUrl, setImageDataUrl] = useState('data:,');
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -26,6 +28,21 @@ const Login = () => {
       }, 2000)
     }
   }, [startCam])
+
+  useEffect(() => {
+    if (imageDataUrl !== 'data:,') {
+      console.log(imageDataUrl);
+      // fetch('/api/upload', {
+        //   method: 'POST',
+        //   body: JSON.stringify({ image: imageDataUrl }),
+        //   headers: { 'Content-Type': 'application/json' }
+        // })
+        // .then(
+        // console.log('setting stopcam')
+        // setStopCam(true)
+        // )
+    }
+  }, [imageDataUrl])
 
   return (
     <Container
@@ -68,7 +85,7 @@ const Login = () => {
           </Button>
           {startCam && (
             <Box mx='auto'>
-              <WebcamStream />
+              <WebcamStream setImageDataUrl={setImageDataUrl} stopCam={stopCam} />
             </Box>
           )}
         </Box>

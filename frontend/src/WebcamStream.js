@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-export default function WebcamStream() {
+export default function WebcamStream({ setImageDataUrl, stopCam }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
@@ -24,9 +24,24 @@ export default function WebcamStream() {
     };
   }, []);
 
+  useEffect(() => {
+    if (stopCam) {
+      // TODO: delete below if once login is properly implemented
+      if (videoRef.current.srcObject == null) return
+      const tracks = videoRef.current.srcObject.getTracks();
+
+      tracks.forEach((track) => {
+        console.log("tracKKAKK", track)
+        track.stop();
+      });
+    }
+  }, [stopCam]);
+
   const captureFrame = () => {
     const canvas = canvasRef.current;
     const video = videoRef.current;
+
+    if (video === null) return;
 
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -35,12 +50,7 @@ export default function WebcamStream() {
 
     const imageDataUrl = canvas.toDataURL('image/jpeg');
 
-    // fetch('/api/upload', {
-    //   method: 'POST',
-    //   body: JSON.stringify({ image: imageDataUrl }),
-    //   headers: { 'Content-Type': 'application/json' }
-    // });
-    console.log(imageDataUrl);
+    setImageDataUrl(imageDataUrl);
   };
 
   return (
