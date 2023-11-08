@@ -7,12 +7,25 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router'
+import WebcamStream from '../WebcamStream'
 import FaceIcon from '@mui/icons-material/Face'
+import { useEffect, useState } from 'react'
 
 const Login = () => {
   const { breakpoints } = useTheme()
   const isMobile = useMediaQuery(breakpoints.down('md'))
+  const [startCam, setStartCam] = useState(false)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (startCam) {
+      // Dummy login
+      setTimeout(() => {
+        navigate('/')
+      }, 2000)
+    }
+  }, [startCam])
 
   return (
     <Container
@@ -39,21 +52,25 @@ const Login = () => {
           ICMS Login
         </Typography>
 
-        <Box display="flex" flexDirection="column" gap={2}>
-          {/* <TextField label="Email" variant="outlined" type="email" />
-          <TextField label="Password" variant="outlined" type="password" />
-          <Button component={Link} to="/" variant="contained">
-            <Typography>Login</Typography>
-          </Button> */}
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          gap={2}
+        >
           <Button
-            component={Link}
-            to="/"
+            onClick={() => setStartCam(true)}
             variant="contained"
             startIcon={<FaceIcon />}
             sx={{ py: 1 }}
           >
             <Typography>Face Login</Typography>
           </Button>
+          {startCam && (
+            <Box mx='auto'>
+              <WebcamStream />
+            </Box>
+          )}
         </Box>
       </Card>
     </Container>
