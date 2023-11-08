@@ -2,11 +2,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Connect to the database 
-# Note: replace the password and database name with your own
-# EG. mysql+mysqlconnector://root:password@localhost/database_name
-URL_database = "mysql+mysqlconnector://root:password@localhost:/comp3278"
+URL_database = os.getenv("DB_URL")
 
 engine = create_engine(URL_database)
 

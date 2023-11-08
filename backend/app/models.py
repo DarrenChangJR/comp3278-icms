@@ -1,7 +1,7 @@
 # The Table used for the database is defined in backend/models.py:
-from sqlachemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Float
-from sqlalchemy.orm import relationship
-from database.py import Base
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Float
+from sqlalchemy.orm import relationship, column_property, composite
+from app.database import Base
 
 # Composite attribute for Course
 # https://docs.sqlalchemy.org/en/14/orm/composites.html

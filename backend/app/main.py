@@ -1,9 +1,9 @@
 from fastapi import FastAPI, Depends, HTTPException
 from pydantic import BaseModel
 from typing import Annotated
-import models
-from database import engine, SessionLocal
-from sqlachemy.orm import Session
+import app.models as models
+from app.database import engine, SessionLocal
+from sqlalchemy.orm import Session
 
 app = FastAPI()
 
@@ -41,9 +41,9 @@ async def root():
  
 # creating database with API calls
 # Note StudentBase is a pydantic model
-@app.post("/student"): 
-async def create_student(student: StudentBase, db: dp_dependency):
-    db_student = models.student(**student.dict())
-    db.add(db_student)
-    db.commit()
-    db.refresh(db_student)
+# @app.post("/student")
+# async def create_student(student: StudentBase, db: dp_dependency):
+#     db_student = models.student(**student.dict())
+#     db.add(db_student)
+#     db.commit()
+#     db.refresh(db_student) 
