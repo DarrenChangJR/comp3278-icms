@@ -18,15 +18,22 @@ import CloseIcon from '@mui/icons-material/Close'
 import MenuIcon from '@mui/icons-material/Menu'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from './auth/useAuth'
 
 const App = () => {
   const drawerWidth = 240
   const { breakpoints } = useTheme()
   const isMobile = useMediaQuery(breakpoints.down('md'))
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [loggedIn, setLoggedIn] = useState(true) // TODO: Replace with actual login state
+  const { loggedIn, logout } = useAuth()
   const navigate = useNavigate()
 
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
+
+  // Redirect to login page if not logged in
   useEffect(() => {
     if (!loggedIn) {
       navigate('/login')
@@ -82,16 +89,17 @@ const App = () => {
             >
               <Typography>Home</Typography>
             </LinkButton>
-            <LinkButton
-              LinkProps={{
-                to: '/login',
+            <Button
+              onClick={handleLogout}
+              sx={{
+                justifyContent: 'start',
+                px: 2,
+                py: 1,
               }}
-              ButtonProps={{
-                startIcon: <LogoutIcon />,
-              }}
+              startIcon={<LogoutIcon />}
             >
               <Typography>Logout</Typography>
-            </LinkButton>
+            </Button>
           </Stack>
         </Drawer>
 

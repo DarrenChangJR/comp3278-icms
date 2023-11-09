@@ -11,86 +11,96 @@ import { useNavigate } from 'react-router'
 import WebcamStream from '../WebcamStream'
 import FaceIcon from '@mui/icons-material/Face'
 import { useEffect, useState } from 'react'
+import { useAuth } from '../auth/useAuth'
 
 const Login = () => {
   const { breakpoints } = useTheme()
   const isMobile = useMediaQuery(breakpoints.down('md'))
   const [startCam, setStartCam] = useState(false)
   const [stopCam, setStopCam] = useState(false)
-  const [imageDataUrl, setImageDataUrl] = useState('data:,');
+  const [imageDataUrl, setImageDataUrl] = useState('data:,')
   const navigate = useNavigate()
+  const { loggedIn, login } = useAuth()
 
+  // Redirect to home if logged in
   useEffect(() => {
-    if (startCam) {
-      // Dummy login
-      setTimeout(() => {
-        navigate('/')
-      }, 2000)
+    if (loggedIn) {
+      navigate('/')
     }
-  }, [startCam])
+  }, [loggedIn, navigate])
 
   useEffect(() => {
     if (imageDataUrl !== 'data:,') {
-      console.log(imageDataUrl);
+      console.log(imageDataUrl)
       // fetch('/api/upload', {
-        //   method: 'POST',
-        //   body: JSON.stringify({ image: imageDataUrl }),
-        //   headers: { 'Content-Type': 'application/json' }
-        // })
-        // .then(
-        // console.log('setting stopcam')
-        // setStopCam(true)
-        // )
+      //   method: 'POST',
+      //   body: JSON.stringify({ image: imageDataUrl }),
+      //   headers: { 'Content-Type': 'application/json' }
+      // })
+      // .then(
+      // console.log('setting stopcam')
+      // setStopCam(true)
+      // )
+
+      // Dummy login
+      setTimeout(() => {
+        login()
+      }, 300)
     }
-  }, [imageDataUrl])
+  }, [imageDataUrl, login])
 
   return (
-    <Container
-      sx={{
-        height: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Card
+    !loggedIn && (
+      <Container
         sx={{
+          height: '100vh',
           display: 'flex',
-          flexDirection: 'column',
+          alignItems: 'center',
           justifyContent: 'center',
-          gap: 4,
-          p: 4,
-          boxShadow: 4,
-          minWidth: isMobile ? '90%' : '70%',
-          color: '#333',
         }}
       >
-        <Typography variant="h3" textAlign="center">
-          ICMS Login
-        </Typography>
-
-        <Box
-          display="flex"
-          flexDirection="column"
-          justifyContent="center"
-          gap={2}
+        <Card
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            gap: 4,
+            p: 4,
+            boxShadow: 4,
+            minWidth: isMobile ? '90%' : '70%',
+            color: '#333',
+          }}
         >
-          <Button
-            onClick={() => setStartCam(true)}
-            variant="contained"
-            startIcon={<FaceIcon />}
-            sx={{ py: 1 }}
+          <Typography variant="h3" textAlign="center">
+            ICMS Login
+          </Typography>
+
+          <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            gap={2}
           >
-            <Typography>Face Login</Typography>
-          </Button>
-          {startCam && (
-            <Box mx='auto'>
-              <WebcamStream setImageDataUrl={setImageDataUrl} stopCam={stopCam} />
-            </Box>
-          )}
-        </Box>
-      </Card>
-    </Container>
+            <Button
+              onClick={() => setStartCam(true)}
+              variant="contained"
+              startIcon={<FaceIcon />}
+              sx={{ py: 1 }}
+            >
+              <Typography>Face Login</Typography>
+            </Button>
+            {startCam && (
+              <Box mx="auto">
+                <WebcamStream
+                  setImageDataUrl={setImageDataUrl}
+                  stopCam={stopCam}
+                />
+              </Box>
+            )}
+          </Box>
+        </Card>
+      </Container>
+    )
   )
 }
 
