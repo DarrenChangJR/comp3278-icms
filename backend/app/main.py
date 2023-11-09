@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Annotated
 import app.models as models
@@ -9,6 +10,18 @@ from PIL import Image
 import base64
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # create the database tables
 models.Base.metadata.create_all(bind=engine)
@@ -31,8 +44,10 @@ dp_dependency = Annotated[Session, Depends(get_db)]
 async def root():
     return {"message": "Hello World"}
 
+
 class ImageData(BaseModel):
     image_data: str
+
 
 @app.post("/login")
 async def login(login_request: ImageData):
