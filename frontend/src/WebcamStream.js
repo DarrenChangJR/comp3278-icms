@@ -1,62 +1,60 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react'
+import { useAuth } from './auth/useAuth'
 
-export default function WebcamStream({ setImageDataUrl, stopCam }) {
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
+export default function WebcamStream() {
+  const videoRef = useRef(null)
+  const canvasRef = useRef(null)
+  const { login } = useAuth()
 
   useEffect(() => {
-    const constraints = { video: true };
-
-    navigator.mediaDevices.getUserMedia(constraints)
+    navigator.mediaDevices
+      .getUserMedia({ video: true })
       .then((stream) => {
-        videoRef.current.srcObject = stream;
+        videoRef.current.srcObject = stream
+        const intervalId = setInterval(sendFrame, 500)
+        return () => {
+          clearInterval(intervalId)
+        }
       })
       .catch((error) => {
-        console.error('Error accessing webcam:', error);
-      });
-  }, []);
+        console.error('Error accessing webcam:', error)
+      })
+  }, [])
 
-  useEffect(() => {
-    const intervalId = setInterval(captureFrame, 500);
+  const sendFrame = () => {
+    const canvas = canvasRef.current
+    const video = videoRef.current
 
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
+    if (video === null) return
 
-  useEffect(() => {
-    if (stopCam) {
-      // TODO: delete below if once login is properly implemented
-      if (videoRef.current.srcObject == null) return
-      const tracks = videoRef.current.srcObject.getTracks();
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
 
-      tracks.forEach((track) => {
-        console.log("tracKKAKK", track)
-        track.stop();
-      });
-    }
-  }, [stopCam]);
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
 
-  const captureFrame = () => {
-    const canvas = canvasRef.current;
-    const video = videoRef.current;
+    const imageDataUrl = canvas.toDataURL('image/jpeg')
 
-    if (video === null) return;
+    if (imageDataUrl === 'data:,') return
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    const imageDataUrl = canvas.toDataURL('image/jpeg');
-
-    setImageDataUrl(imageDataUrl);
-  };
+    fetch('http://localhost:8000/login', {
+      method: 'POST',
+      body: JSON.stringify({ image_data: imageDataUrl }),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((res) => {
+        return res.json()
+      })
+      .then((res) => {
+        const tracks = videoRef.current.srcObject.getTracks()
+        tracks.forEach((track) => track.stop())
+        login(res.access_token)
+      })
+  }
 
   return (
     <div>
       <video ref={videoRef} autoPlay />
       <canvas ref={canvasRef} style={{ display: 'none' }} />
     </div>
-  );
-};
+  )
+}
