@@ -31,16 +31,19 @@ dp_dependency = Annotated[Session, Depends(get_db)]
 async def root():
     return {"message": "Hello World"}
 
+class ImageData(BaseModel):
+    image_data: str
+
 @app.post("/login")
-async def login(image_data: str):
-    image_data = image_data.replace("data:image/jpeg;base64,", "")
+async def login(login_request: ImageData):
+    image_data = login_request.image_data.replace("data:image/jpeg;base64,", "")
     image_bytes = base64.b64decode(image_data)
     image = Image.open(io.BytesIO(image_bytes))
 
     # TODO: use image to get student id
     # ofc, fail if student id is not found
     student_id = "12345678"
-    return {"student_id": student_id}
+    return {"access_token": student_id}
 
 # route for successful login
 
