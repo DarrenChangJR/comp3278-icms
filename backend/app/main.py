@@ -31,7 +31,7 @@ dp_dependency = Annotated[Session, Depends(get_db)]
 async def root():
     return {"message": "Hello World"}
 
-@app.get("/login")
+@app.post("/login")
 async def login(image_data: str):
     image_data = image_data.replace("data:image/jpeg;base64,", "")
     image_bytes = base64.b64decode(image_data)
