@@ -1,27 +1,32 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useAuth } from './auth/useAuth'
 
 export default function WebcamStream() {
+  const intervalId = useRef(null)
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
   const { login } = useAuth()
+  const [isAllowed, setIsAllowed] = useState(false)
 
-  useEffect(() => {
+  if (!isAllowed) {
+    console.log('Requesting webcam access...')
     navigator.mediaDevices
       .getUserMedia({ video: true })
       .then((stream) => {
         videoRef.current.srcObject = stream
-        const intervalId = setInterval(sendFrame, 500)
-        return () => {
-          clearInterval(intervalId)
-        }
+        console.log('Webcam access granted')
+        setIsAllowed(true)
       })
       .catch((error) => {
         console.error('Error accessing webcam:', error)
       })
+  }
+
+  useEffect(() => {
+    intervalId.current = setInterval(sendFrame, 500)
   }, [])
 
-  const sendFrame = () => {
+  const sendFrame = async () => {
     const canvas = canvasRef.current
     const video = videoRef.current
 
@@ -44,10 +49,18 @@ export default function WebcamStream() {
       .then((res) => {
         return res.json()
       })
-      .then((res) => {
-        const tracks = videoRef.current.srcObject.getTracks()
-        tracks.forEach((track) => track.stop())
-        login(res.access_token)
+      .then((data) => {
+        clearInterval(intervalId.current)
+        const stream = videoRef.current.srcObject
+        stream.getTracks().forEach((track) => {
+          track.stop()
+          stream.removeTrack(track)
+        })
+        videoRef.current.srcObject = null
+        login(data.access_token)
+      })
+      .catch((error) => {
+        console.error('Error:', error)
       })
   }
 
