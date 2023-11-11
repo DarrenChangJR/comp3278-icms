@@ -1,12 +1,13 @@
 from fastapi import FastAPI, Depends, HTTPException
-from pydantic import BaseModel
-from typing import Annotated
+from pydantic import BaseModel, OrmModel
+from typing import Annotated, Optional
 import app.models as models
 from app.database import engine, SessionLocal
 from sqlalchemy.orm import Session
 import io
 from PIL import Image
 import base64
+from datetime import datetime
 
 app = FastAPI()
 
@@ -14,6 +15,67 @@ app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
 
 # we need to create pydantic models for the data we want to receive and send with the route post & get requests
+# Note: we use OrmModel as there is relationship involved in the database
+
+class NoteBase(OrmModel):
+    note: str
+    
+    class Config:
+        orm_mode = True
+
+class ClassBase(OrmModel):
+    class_id: Optional [int]
+    class_teacher_message: str
+    class_location: str
+    class_day: str
+    class_type: str
+    class_zoom_link: str
+    class_start_time: datetime
+    class_end_time: datetime
+    
+    class Config:
+        orm_mode = True
+        
+class CourseBase(OrmModel):
+    course_id: int
+    course_code: str
+    semester: str
+    academic_year: str
+    course_name: str
+    course_moodle_link: str
+    
+    # one to many relationship with note table & class table
+    course_notes: Optional[list["NoteBase"]] = None
+    course_classes: Optional[list["ClassBase"]] = None
+    
+    class Config:
+        orm_mode = True
+        
+# For checking whether data is valid when initializing a new student
+class StudentBase(OrmModel):
+    student_id: Optional[int]
+    student_name: str
+    student_email: str
+    student_last_login: datetime
+    student_last_logout: datetime
+    student_last_stay_for: datetime
+    
+    class Config:
+        orm_mode = True
+
+# Many to Many relationship pydantic model https://www.gormanalysis.com/blog/many-to-many-relationships-in-fastapi/
+# Setting up extra model to prevent circular dependency issue
+class StudentSchema(StudentBase):
+    take_course: Optional[list[CourseBase]] = None
+    
+    class Config:
+        orm_mode = True
+class CourseSchema(CourseBase):
+    has_student: Optional[list[StudentBase]] = None
+    
+    class Config:
+        orm_mode = True
+
 
 # dependency for database connection
 def get_db():
@@ -54,6 +116,10 @@ async def login(login_request: ImageData):
 # route for main page if there is no class
 
 # route for sending email?
+
+# route for populating DB
+@app.post("/populate")
+async def populate_db(db: dp_dependency):
 
  
 # creating database with API calls

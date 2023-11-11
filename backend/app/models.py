@@ -33,14 +33,14 @@ class Student(Base):
     __tablename__ = "student"
     student_id = Column(Integer, primary_key=True, index=True)
     student_name = Column(String(64), nullable=False)
-    student_email = Column(String(64), nullable=False)
+    student_email = Column(String(64), nullable=False, unique=True)
     student_last_login = Column(DateTime, nullable=False)
     student_last_logout = Column(DateTime, nullable=False)
     
     #derived attribute 
     student_last_stay_for = column_property(student_last_logout - student_last_login)
     
-    #relationship with course table
+    # many to many relationship with course table
     take_course = relationship("Course", secondary=Takes, back_populates="has_student")
     
 class Course(Base):
@@ -69,7 +69,7 @@ class Class(Base):
     __tablename__ = "class"
     # for composite primary key, use primary_key=True in both columns
     #https://docs.sqlalchemy.org/en/20/faq/ormconfiguration.html
-    class_id = Column(Integer, primary_key=True)
+    class_id = Column(Integer, primary_key=True, index=True)
     course_id = Column(Integer, ForeignKey("course.course_id"),primary_key=True)
     
     class_teacher_message = Column(String(256), nullable=False)
