@@ -38,8 +38,10 @@ class Student(Base):
     last_logout = Column(DateTime, nullable=False)
     
     #derived attribute 
-    last_stay_for = column_property(last_logout - last_login)
-    
+    @property
+    def last_stay_for(self):
+        return self.last_logout - self.last_login
+        
     # many to many relationship with course table
     take_course = relationship("Course", secondary=Takes, back_populates="has_student")
     
@@ -59,11 +61,17 @@ class Course(Base):
     
     # one to many relationship with class table
     classes = relationship("Class", back_populates="course")
+
+    # many to many relationship with student table
+    has_student = relationship("Student", secondary=Takes, back_populates="take_course")
     
 class Note(Base):
     __tablename__ = "note"
     course_id = Column(Integer, ForeignKey("course.course_id"), primary_key=True)
     notes = Column(String(128), primary_key=True, nullable=False)
+
+    # many to one relationship with course table
+    course = relationship("Course", back_populates="notes")
 
 class Class(Base):
     __tablename__ = "class"
@@ -79,3 +87,6 @@ class Class(Base):
     zoom_link = Column(String(128), nullable=False)
     start_time = Column(DateTime, nullable=False)
     end_time = Column(DateTime, nullable=False)
+
+    # many to one relationship with course table
+    course = relationship("Course", back_populates="classes")
