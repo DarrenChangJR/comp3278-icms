@@ -1,9 +1,10 @@
 from fastapi import FastAPI, Depends, HTTPException
-from pydantic import BaseModel, OrmModel
+from pydantic import BaseModel
 from typing import Annotated, Optional
 import app.models as models
 from app.database import engine, SessionLocal
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 import io
 from PIL import Image
 import base64
@@ -11,19 +12,31 @@ from datetime import datetime
 
 app = FastAPI()
 
-# create the database tables
+# create the database tables and populate them with dummy data
 models.Base.metadata.create_all(bind=engine)
+with open("dummy.sql", "r") as file:
+    sql_script = file.read()
+
+with engine.connect() as connection:
+    # execute the sql script one statement at a time, splitting on the semicolon
+    for statement in sql_script.split(";"):
+        # skip empty statements
+        if statement.strip() == "":
+            continue
+        # execute the statement
+        connection.execute(text(statement))
+        connection.commit()
 
 # we need to create pydantic models for the data we want to receive and send with the route post & get requests
 # Note: we use OrmModel as there is relationship involved in the database
 
-class NoteBase(OrmModel):
+class NoteBase(BaseModel):
     note: str
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
-class ClassBase(OrmModel):
+class ClassBase(BaseModel):
     class_id: Optional [int]
     class_teacher_message: str
     class_location: str
@@ -34,9 +47,9 @@ class ClassBase(OrmModel):
     class_end_time: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
         
-class CourseBase(OrmModel):
+class CourseBase(BaseModel):
     course_id: int
     course_code: str
     semester: str
@@ -49,10 +62,10 @@ class CourseBase(OrmModel):
     course_classes: Optional[list["ClassBase"]] = None
     
     class Config:
-        orm_mode = True
+        from_attributes = True
         
 # For checking whether data is valid when initializing a new student
-class StudentBase(OrmModel):
+class StudentBase(BaseModel):
     student_id: Optional[int]
     student_name: str
     student_email: str
@@ -61,7 +74,7 @@ class StudentBase(OrmModel):
     student_last_stay_for: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Many to Many relationship pydantic model https://www.gormanalysis.com/blog/many-to-many-relationships-in-fastapi/
 # Setting up extra model to prevent circular dependency issue
@@ -69,12 +82,12 @@ class StudentSchema(StudentBase):
     take_course: Optional[list[CourseBase]] = None
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 class CourseSchema(CourseBase):
     has_student: Optional[list[StudentBase]] = None
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 # dependency for database connection
@@ -118,8 +131,8 @@ async def login(login_request: ImageData):
 # route for sending email?
 
 # route for populating DB
-@app.post("/populate")
-async def populate_db(db: dp_dependency):
+# @app.post("/populate")
+# async def populate_db(db: dp_dependency):
 
  
 # creating database with API calls

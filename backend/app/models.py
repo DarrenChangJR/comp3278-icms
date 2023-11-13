@@ -1,5 +1,5 @@
 # The Table used for the database is defined in backend/models.py:
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Float
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Float, Table
 from sqlalchemy.orm import relationship, column_property, composite
 from app.database import Base
 
@@ -23,22 +23,22 @@ class Offer_in(object):
         return not self.__eq__(other)
 
 # association table to connect the Student and Course table
-class Takes(Base):
-    __tablename__ = "takes"
-    student_id = Column(Integer, ForeignKey("student.student_id"), primary_key=True)
-    course_id = Column(Integer, ForeignKey("course.course_id"), primary_key=True)
-    
+Takes = Table('takes', Base.metadata,
+    Column('student_id', Integer, ForeignKey('student.student_id')),
+    Column('course_id', Integer, ForeignKey('course.course_id'))
+)
+
 class Student(Base):
     #initialize the table
     __tablename__ = "student"
     student_id = Column(Integer, primary_key=True, index=True)
-    student_name = Column(String(64), nullable=False)
-    student_email = Column(String(64), nullable=False, unique=True)
-    student_last_login = Column(DateTime, nullable=False)
-    student_last_logout = Column(DateTime, nullable=False)
+    name = Column(String(64), nullable=False)
+    email = Column(String(64), nullable=False, unique=True)
+    last_login = Column(DateTime, nullable=False)
+    last_logout = Column(DateTime, nullable=False)
     
     #derived attribute 
-    student_last_stay_for = column_property(student_last_logout - student_last_login)
+    last_stay_for = column_property(last_logout - last_login)
     
     # many to many relationship with course table
     take_course = relationship("Course", secondary=Takes, back_populates="has_student")
@@ -47,18 +47,18 @@ class Course(Base):
     
     __tablename__ = "course"
     course_id = Column(Integer, primary_key=True, index=True)
-    course_code = Column(String(64), nullable=False)
+    code = Column(String(64), nullable=False)
     semester = Column(String(64), nullable=False)
     academic_year = Column(String(64), nullable=False)
-    course_offer_in = composite(Offer_in, semester, academic_year)
-    course_name = Column(String(128), nullable=False)
-    course_moodle_link = Column(String(128), nullable=False)
+    offer_in = composite(Offer_in, semester, academic_year)
+    name = Column(String(128), nullable=False)
+    moodle_link = Column(String(128), nullable=False)
     
     # one to many relationship with note table
-    course_notes = relationship("Note", back_populates="course")
+    notes = relationship("Note", back_populates="course")
     
     # one to many relationship with class table
-    course_classes = relationship("Class", back_populates="course")
+    classes = relationship("Class", back_populates="course")
     
 class Note(Base):
     __tablename__ = "note"
@@ -72,18 +72,10 @@ class Class(Base):
     class_id = Column(Integer, primary_key=True, index=True)
     course_id = Column(Integer, ForeignKey("course.course_id"),primary_key=True)
     
-    class_teacher_message = Column(String(256), nullable=False)
-    class_location = Column(String(64), nullable=False)
-    class_day = Column(String(64), nullable=False)
-    class_type = Column(String(64), nullable=False) #could be boolean for lecture or tutorial
-    class_zoom_link = Column(String(128), nullable=False)
-    class_start_time = Column(DateTime, nullable=False)
-    class_end_time = Column(DateTime, nullable=False)
-
-
-    
-    
-    
-    
-    
-    
+    teacher_message = Column(String(256), nullable=False)
+    location = Column(String(64), nullable=False)
+    day = Column(String(64), nullable=False)
+    type = Column(String(64), nullable=False) #could be boolean for lecture or tutorial
+    zoom_link = Column(String(128), nullable=False)
+    start_time = Column(DateTime, nullable=False)
+    end_time = Column(DateTime, nullable=False)
