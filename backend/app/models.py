@@ -56,6 +56,7 @@ class Course(Base):
     name = Column(String(128), nullable=False)
     moodle_link = Column(String(128), nullable=False)
     
+    # notes is a multi-valued attribute of Course
     # one to many relationship with note table
     notes = relationship("Note", back_populates="course")
     
@@ -64,12 +65,14 @@ class Course(Base):
 
     # many to many relationship with student table
     has_student = relationship("Student", secondary=Takes, back_populates="take_course")
-    
+
+# notes is a multi-valued attribute of Course
 class Note(Base):
     __tablename__ = "note"
-    course_id = Column(Integer, ForeignKey("course.course_id"), primary_key=True)
-    notes = Column(String(128), primary_key=True, nullable=False)
-
+    note_id = Column(Integer, primary_key=True, index=True)
+    course_id = Column(Integer, ForeignKey("course.course_id"))
+    note = Column(String(256), nullable=False)
+    
     # many to one relationship with course table
     course = relationship("Course", back_populates="notes")
 
@@ -77,8 +80,8 @@ class Class(Base):
     __tablename__ = "class"
     # for composite primary key, use primary_key=True in both columns
     #https://docs.sqlalchemy.org/en/20/faq/ormconfiguration.html
-    class_id = Column(Integer, primary_key=True, index=True)
-    course_id = Column(Integer, ForeignKey("course.course_id"),primary_key=True)
+    class_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    course_id = Column(Integer, ForeignKey("course.course_id"), primary_key=True)
     
     teacher_message = Column(String(256), nullable=False)
     location = Column(String(64), nullable=False)
