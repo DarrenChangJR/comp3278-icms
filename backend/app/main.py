@@ -4,7 +4,7 @@ from typing import Annotated, Optional
 import app.models as models
 from app.database import engine, SessionLocal
 from sqlalchemy.orm import Session
-from sqlalchemy import text
+from sqlalchemy import text, insert
 import io
 from PIL import Image
 import base64
@@ -32,59 +32,52 @@ with engine.connect() as connection:
 
 class NoteBase(BaseModel):
     note: str
+    course_id: int
     
     class Config:
         from_attributes = True
 
 class ClassBase(BaseModel):
-    class_id: Optional [int]
-    class_teacher_message: str
-    class_location: str
-    class_day: str
-    class_type: str
-    class_zoom_link: str
-    class_start_time: datetime
-    class_end_time: datetime
+    teacher_message: str
+    location: str
+    day: str
+    type: str
+    zoom_link: str
+    start_time: datetime
+    end_time: datetime
     
     class Config:
         from_attributes = True
         
 class CourseBase(BaseModel):
-    course_id: int
-    course_code: str
+    code: str
     semester: str
     academic_year: str
-    course_name: str
-    course_moodle_link: str
+    name: str
+    moodle_link: str
     
     # one to many relationship with note table & class table
-    course_notes: Optional[list["NoteBase"]] = None
-    course_classes: Optional[list["ClassBase"]] = None
+    notes: Optional[list["NoteBase"]] = None
+    classes: Optional[list["ClassBase"]] = None
     
     class Config:
         from_attributes = True
         
 # For checking whether data is valid when initializing a new student
 class StudentBase(BaseModel):
-    student_id: Optional[int]
-    student_name: str
-    student_email: str
-    student_last_login: datetime
-    student_last_logout: datetime
-    student_last_stay_for: datetime
+    name: str
+    email: str
+    last_login: datetime
+    last_logout: datetime
     
     class Config:
         from_attributes = True
 
-# Many to Many relationship pydantic model https://www.gormanalysis.com/blog/many-to-many-relationships-in-fastapi/
-# Setting up extra model to prevent circular dependency issue
-class StudentSchema(StudentBase):
-    take_course: Optional[list[CourseBase]] = None
-    
-    class Config:
-        from_attributes = True
-class CourseSchema(CourseBase):
-    has_student: Optional[list[StudentBase]] = None
+# Takes is a table that is used to implement many to many relationship between student and course
+# we need to create a pydantic model for this table
+class TakesBase(BaseModel):
+    student_id: int
+    course_id: int
     
     class Config:
         from_attributes = True
@@ -137,9 +130,36 @@ async def login(login_request: ImageData):
  
 # creating database with API calls
 # Note StudentBase is a pydantic model
-# @app.post("/student")
-# async def create_student(student: StudentBase, db: dp_dependency):
-#     db_student = models.student(**student.dict())
-#     db.add(db_student)
-#     db.commit()
-#     db.refresh(db_student) 
+@app.post("/create_student")
+async def create_student(student: StudentBase, db: dp_dependency):
+    db_student = models.Student(**student.model_dump())
+    db.add(db_student)
+    db.commit()
+    db.refresh(db_student)
+
+@app.post("/create_course")
+async def create_course(course: CourseBase, db: dp_dependency):
+    db_course = models.Course(code=course.code, semester=course.semester, academic_year=course.academic_year, name=course.name, moodle_link=course.moodle_link)
+    db.add(db_course)
+    db.commit()
+    db.refresh(db_course)
+    # create notes
+    for note in course.notes:
+        db_note = models.Note(**note.model_dump())
+        db_note.course_id = db_course.course_id
+        db.add(db_note)
+        db.commit()
+        db.refresh(db_note)
+    # create classes
+    for class_ in course.classes:
+        db_class = models.Class(**class_.model_dump())
+        db_class.course_id = db_course.course_id
+        db.add(db_class)
+        db.commit()
+        db.refresh(db_class)
+
+@app.post("/create_take")
+async def create_take(take: TakesBase, db: dp_dependency):
+    stmt = insert(models.Takes).values(student_id=take.student_id, course_id=take.course_id)
+    db.execute(stmt)
+    db.commit()
