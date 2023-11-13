@@ -8,7 +8,7 @@ import {
   useTheme,
 } from '@mui/material'
 import { useNavigate } from 'react-router'
-import WebcamStream from '../WebcamStream'
+import WebcamStream from '../components/WebcamStream'
 import FaceIcon from '@mui/icons-material/Face'
 import { useEffect, useState } from 'react'
 import { useAuth } from '../auth/useAuth'
