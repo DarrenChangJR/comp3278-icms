@@ -1,14 +1,14 @@
-from fastapi import FastAPI, Depends, HTTPException
-from pydantic import BaseModel
-from typing import Annotated, Optional
+from fastapi import FastAPI, Depends
+from typing import Annotated
 import app.models as models
 from app.database import engine, SessionLocal
+from app.schemas import ImageData, CourseBase, StudentBase, TakesBase
 from sqlalchemy.orm import Session
 from sqlalchemy import text, insert
 import io
 from PIL import Image
 import base64
-from datetime import datetime
+
 
 app = FastAPI()
 
@@ -27,61 +27,6 @@ with engine.connect() as connection:
         connection.execute(text(statement))
         connection.commit()
 
-# we need to create pydantic models for the data we want to receive and send with the route post & get requests
-# Note: we use OrmModel as there is relationship involved in the database
-
-class NoteBase(BaseModel):
-    note: str
-    course_id: int
-    
-    class Config:
-        from_attributes = True
-
-class ClassBase(BaseModel):
-    teacher_message: str
-    location: str
-    day: str
-    type: str
-    zoom_link: str
-    start_time: datetime
-    end_time: datetime
-    
-    class Config:
-        from_attributes = True
-        
-class CourseBase(BaseModel):
-    code: str
-    semester: str
-    academic_year: str
-    name: str
-    moodle_link: str
-    
-    # one to many relationship with note table & class table
-    notes: Optional[list["NoteBase"]] = None
-    classes: Optional[list["ClassBase"]] = None
-    
-    class Config:
-        from_attributes = True
-        
-# For checking whether data is valid when initializing a new student
-class StudentBase(BaseModel):
-    name: str
-    email: str
-    last_login: datetime
-    last_logout: datetime
-    
-    class Config:
-        from_attributes = True
-
-# Takes is a table that is used to implement many to many relationship between student and course
-# we need to create a pydantic model for this table
-class TakesBase(BaseModel):
-    student_id: int
-    course_id: int
-    
-    class Config:
-        from_attributes = True
-
 
 # dependency for database connection
 def get_db():
@@ -99,8 +44,6 @@ dp_dependency = Annotated[Session, Depends(get_db)]
 async def root():
     return {"message": "Hello World"}
 
-class ImageData(BaseModel):
-    image_data: str
 
 @app.post("/login")
 async def login(login_request: ImageData):
@@ -112,14 +55,6 @@ async def login(login_request: ImageData):
     # ofc, fail if student id is not found
     student_id = "12345678"
     return {"access_token": student_id}
-
-# route for successful login
-
-# route for failed login
-
-# route for main page if there is class
-
-# route for main page if there is no class
 
 # route for sending email?
 

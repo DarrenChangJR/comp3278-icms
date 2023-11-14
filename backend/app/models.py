@@ -1,6 +1,5 @@
-# The Table used for the database is defined in backend/models.py:
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Float, Table
-from sqlalchemy.orm import relationship, column_property, composite
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Table
+from sqlalchemy.orm import relationship, composite
 from app.database import Base
 
 # Composite attribute for Course
@@ -22,11 +21,13 @@ class Offer_in(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
+
 # association table to connect the Student and Course table
 Takes = Table('takes', Base.metadata,
     Column('student_id', Integer, ForeignKey('student.student_id')),
     Column('course_id', Integer, ForeignKey('course.course_id'))
 )
+
 
 class Student(Base):
     #initialize the table
@@ -44,9 +45,9 @@ class Student(Base):
         
     # many to many relationship with course table
     take_course = relationship("Course", secondary=Takes, back_populates="has_student")
-    
+
+
 class Course(Base):
-    
     __tablename__ = "course"
     course_id = Column(Integer, primary_key=True, index=True)
     code = Column(String(64), nullable=False)
@@ -66,7 +67,7 @@ class Course(Base):
     # many to many relationship with student table
     has_student = relationship("Student", secondary=Takes, back_populates="take_course")
 
-# notes is a multi-valued attribute of Course
+
 class Note(Base):
     __tablename__ = "note"
     note_id = Column(Integer, primary_key=True, index=True)
@@ -75,6 +76,7 @@ class Note(Base):
     
     # many to one relationship with course table
     course = relationship("Course", back_populates="notes")
+
 
 class Class(Base):
     __tablename__ = "class"
