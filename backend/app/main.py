@@ -98,3 +98,33 @@ async def create_take(take: TakesBase, db: dp_dependency):
     stmt = insert(models.Takes).values(student_id=take.student_id, course_id=take.course_id)
     db.execute(stmt)
     db.commit()
+
+@app.get('/student/{student_id}')
+async def get_student(student_id: int, db: dp_dependency):
+    stmt_student = text("SELECT * FROM student WHERE student_id = :student_id")
+    stmt_courses = text("SELECT * FROM takes WHERE student_id = :student_id")
+    result_student = db.execute(stmt_student, {"student_id":student_id}).fetchone()
+    result_courses = db.execute(stmt_courses, {"student_id":student_id}).fetchall()
+    if result_student is None:
+        return {"message": "Student not found"}
+    else:
+        #unpack the result from row first
+        student_id, name, email, last_login, last_logout = result_student
+        courses = []
+        for course in result_courses:
+            course_id = course[1]
+            stmt_course = text("SELECT * FROM course WHERE course_id = :course_id")
+            stmt_class = text("SELECT * FROM class WHERE course_id = :course_id")
+            result_course = db.execute(stmt_course, {"course_id":course_id}).fetchone()
+            result_class = db.execute(stmt_class, {"course_id":course_id}).fetchall()
+            if result_course is None:
+                return {"message": "Course not found"}
+            else:
+                #unpack the result from row first
+                course_id, code, semester, academic_year, name, moodle_link = result_course
+                classes = []
+                for class_ in result_class:
+                    class_id,course_id, teacher_message, location, day, type, zoom_link, start_time, end_time = class_
+                    classes.append({"class_id":class_id, "course_id":course_id, "teacher_message":teacher_message, "location":location, "day":day, "type":type, "zoom_link":zoom_link, "start_time":start_time, "end_time":end_time})
+                courses.append({"course_id":course_id, "code":code, "semester":semester, "academic_year":academic_year, "name":name, "moodle_link":moodle_link, "classes":classes})
+        return {"student_id":student_id, "name":name, "email":email, "last_login":last_login, "last_logout":last_logout, "courses":courses}
