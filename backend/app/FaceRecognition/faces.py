@@ -1,26 +1,32 @@
-import urllib
 import numpy as np
 import mysql.connector
 import cv2
 import pyttsx3
 import pickle
 from datetime import datetime
-import sys
+import base64
+from dotenv import load_dotenv
+import os
 
-# 1 Create database connection
-myconn = mysql.connector.connect(host="localhost", user="root", passwd="123456", database="facerecognition")
-date = datetime.utcnow()
-now = datetime.now()
-current_time = now.strftime("%H:%M:%S")
+load_dotenv()
+
+# Get environment variables
+host = os.getenv("DB_HOST")
+user = os.getenv("DB_USER")
+passwd = os.getenv("DB_PASSWORD")
+database = os.getenv("DB_NAME")
+
+# Create database connection
+myconn = mysql.connector.connect(host=host, user=user, passwd=passwd, database=database)
 cursor = myconn.cursor()
 
 
 #2 Load recognize and read label from model
 recognizer = cv2.face.LBPHFaceRecognizer_create()
-recognizer.read("train.yml")
+recognizer.read("app/FaceRecognition/train.yml")
 
 labels = {"person_name": 1}
-with open("labels.pickle", "rb") as f:
+with open("app/FaceRecognition/labels.pickle", "rb") as f:
     labels = pickle.load(f)
     labels = {v: k for k, v in labels.items()}
 
@@ -30,17 +36,18 @@ rate = engine.getProperty("rate")
 engine.setProperty("rate", 175)
 
 # Define camera and detect face
-face_cascade = cv2.CascadeClassifier('haarcascade/haarcascade_frontalface_default.xml')
-cap = cv2.VideoCapture(0)
+face_cascade = cv2.CascadeClassifier('app/FaceRecognition/haarcascade/haarcascade_frontalface_default.xml')
 
 # 3 Open the camera and start face recognition
-while True:
-    ret, frame = cap.read()
+def recognise_face(image_data):
+    current_datetime = datetime.now()
+    image_bytes = base64.b64decode(image_data)
+    np_array = np.frombuffer(image_bytes, np.uint8)
+    frame = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5)
 
     for (x, y, w, h) in faces:
-        print(x, w, y, h)
         roi_gray = gray[y:y + h, x:x + w]
         roi_color = frame[y:y + h, x:x + w]
         # predict the id and confidence for faces
@@ -48,74 +55,16 @@ while True:
 
         # If the face is recognized
         if conf >= 60:
-            # print(id_)
-            # print(labels[id_])
-            font = cv2.QT_FONT_NORMAL
-            id = 0
-            id += 1
-            name = labels[id_]
-            current_name = name
-            color = (255, 0, 0)
-            stroke = 2
-            cv2.putText(frame, name, (x, y), font, 1, color, stroke, cv2.LINE_AA)
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), (2))
+            student_id = labels[id_]
 
-            # Find the student's information in the database.
-            select = "SELECT student_id, name, DAY(login_date), MONTH(login_date), YEAR(login_date) FROM Student WHERE name='%s'" % (name)
-            name = cursor.execute(select)
-            result = cursor.fetchall()
-            # print(result)
-            data = "error"
+            # Update the data in database
+            update =  "UPDATE student SET last_login=%s WHERE student_id=%s"
+            val = (current_datetime, student_id)
+            cursor.execute(update, val)
+            myconn.commit()
 
-            for x in result:
-                data = x
-
-            # If the student's information is not found in the database
-            if data == "error":
-                print("The student", current_name, "is NOT FOUND in the database.")
-
-            # If the student's information is found in the database
-            else:
-                """
-                Implement useful functions here.
-                Check the course and classroom for the student.
-                    If the student has class room within one hour, the corresponding course materials
-                        will be presented in the GUI.
-                    if the student does not have class at the moment, the GUI presents a personal class 
-                        timetable for the student.
-
-                """
-                # Update the data in database
-                update =  "UPDATE Student SET login_date=%s WHERE name=%s"
-                val = (date, current_name)
-                cursor.execute(update, val)
-                update = "UPDATE Student SET login_time=%s WHERE name=%s"
-                val = (current_time, current_name)
-                cursor.execute(update, val)
-                myconn.commit()
-               
-                hello = ("Hello ", current_name, "You did attendance today")
-                print(hello)
-                engine.say(hello)
-                # engine.runAndWait()
-
+            return {"access_token": student_id}
 
         # If the face is unrecognized
-        else: 
-            color = (255, 0, 0)
-            stroke = 2
-            font = cv2.QT_FONT_NORMAL
-            cv2.putText(frame, "UNKNOWN", (x, y), font, 1, color, stroke, cv2.LINE_AA)
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), (2))
-            hello = ("Your face is not recognized")
-            print(hello)
-            engine.say(hello)
-            # engine.runAndWait()
-
-    cv2.imshow('Attendance System', frame)
-    k = cv2.waitKey(20) & 0xff
-    if k == ord('q'):
-        break
-        
-cap.release()
-cv2.destroyAllWindows()
+        else:
+            return {"Error": "Face not recognized"}
