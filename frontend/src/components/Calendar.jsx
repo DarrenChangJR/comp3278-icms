@@ -15,7 +15,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import MenuIcon from '@mui/icons-material/Menu'
 import dayjs from 'dayjs'
 
-const Calendar = ({ class_times, handleMenuClick }) => {
+const Calendar = ({ classTimes, handleMenuClick }) => {
   const { breakpoints, palette } = useTheme()
   const isMobile = useMediaQuery(breakpoints.down('md'))
   const now = useMemo(() => dayjs(), [])
@@ -229,8 +229,8 @@ const Calendar = ({ class_times, handleMenuClick }) => {
                       )}
 
                       {/* Class card */}
-                      {i > 0 && class_times?.[i - 1]?.[day] && (
-                        <ClassCard class_={class_times[i - 1][day]} />
+                      {i > 0 && classTimes?.[i - 1]?.[day] && (
+                        <ClassCard class_={classTimes[i - 1][day]} />
                       )}
                     </Grid>
                   )
