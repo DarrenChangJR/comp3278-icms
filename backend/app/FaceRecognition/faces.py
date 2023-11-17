@@ -31,9 +31,9 @@ with open("app/FaceRecognition/labels.pickle", "rb") as f:
     labels = {v: k for k, v in labels.items()}
 
 # create text to speech
-engine = pyttsx3.init()
-rate = engine.getProperty("rate")
-engine.setProperty("rate", 175)
+# engine = pyttsx3.init()
+# rate = engine.getProperty("rate")
+# engine.setProperty("rate", 175)
 
 # Define camera and detect face
 face_cascade = cv2.CascadeClassifier('app/FaceRecognition/haarcascade/haarcascade_frontalface_default.xml')

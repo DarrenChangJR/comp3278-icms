@@ -36,6 +36,7 @@ You should see a `(.venv)` prefix in your terminal after activating.
 
 ```bash
 pip install -r requirements.txt
+pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 ```
 
 ### 3. Configure environment variables

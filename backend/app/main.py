@@ -7,6 +7,14 @@ from app.schemas import ImageData, CourseBase, StudentBase, TakesBase
 from sqlalchemy.orm import Session
 from sqlalchemy import text, insert
 from app.FaceRecognition.faces import recognise_face
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from google.oauth2.credentials import Credentials
+from email.mime.text import MIMEText
+import base64
+import os
 
 
 app = FastAPI()
@@ -63,10 +71,65 @@ async def login(login_request: ImageData):
     return result
 
 # route for sending email?
+@app.post("/email_info/{student_id}")
+async def email_info(student_id: int, db: dp_dependency):
+    stmt_email = text("SELECT email FROM student WHERE student_id = :student_id")
+    result = db.execute(stmt_email, {"student_id":student_id}).fetchone()
+    if result is None:
+        return {"Error": "Student not found"}
+    else:
+        email = result[0]
+        
+        # TODO: Get the information about the class with sql query
+        
+        # Send the email
+        # If modifying these SCOPES, delete the file token.json.
+        SCOPES = ['https://www.googleapis.com/auth/gmail.send']
+        
+        def create_message(sender, to, subject, message_text):
+            message = MIMEText(message_text)
+            message['to'] = to
+            message['from'] = sender
+            message['subject'] = subject
+            return {'raw': base64.urlsafe_b64encode(message.as_string().encode()).decode()}
 
-# route for populating DB
-# @app.post("/populate")
-# async def populate_db(db: dp_dependency):
+        def send_message(service, user_id, message):
+            try:
+                message = (service.users().messages().send(userId=user_id, body=message).execute())
+                # print('Message Id: %s' % message['id'])
+                return message
+            except HttpError as error:
+                print('An error occurred: %s' % error)
+
+        def send_email():
+            creds = None
+            if os.path.exists('token.json'):
+                creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+            if not creds or not creds.valid:
+                if creds and creds.expired and creds.refresh_token:
+                    creds.refresh(Request())
+                else:
+                    flow = InstalledAppFlow.from_client_secrets_file(
+                        'credentials.json', SCOPES)
+                    creds = flow.run_local_server(port=0)
+                with open('token.json', 'w') as token:
+                    token.write(creds.to_json())
+                    
+            service = build('gmail', 'v1', credentials=creds)
+            sender = "comp3278t@gmail.com"
+            to = email
+            subject = "Your attendance report"
+            message_text = "Testing this out"
+            message = create_message(sender, to, subject, message_text)
+            send_message(service, "me", message)
+        
+        try:
+            send_email()
+            return {"Completion": "success"} 
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return {"Error": "Failure to send email"}
+
 
  
 # creating database with API calls
