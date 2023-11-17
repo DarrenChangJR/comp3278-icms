@@ -13,6 +13,6 @@ INSERT INTO takes (student_id, course_id) VALUES
 
 INSERT INTO class (course_id, teacher_message, location, day, type, zoom_link, start_time, end_time) 
 VALUES 
-(1, "HI", "csa", '1', 'Lecture', "njeklsd", '2023-01-02 12:00:00', '2023-01-02 12:00:00'),
-(1, "Nigga", "sky hall", '1', 'Tutorial', "dasgvhj", '2023-01-02 12:00:00', '2023-01-02 12:00:00'),
-(1, "How are u", "u hall", '2', 'Tutorial', "hjbasd", '2023-01-02 12:00:00', '2023-01-02 12:00:00');
+(1, "HI", "csa", '1', 'Lecture', "njeklsd", '09:30', '12:20'),
+(1, "Nigga", "sky hall", '1', 'Tutorial', "dasgvhj", '13:30', '14:20'),
+(1, "How are u", "u hall", '2', 'Tutorial', "hjbasd", '13:30', '14:20');

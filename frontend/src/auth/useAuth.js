@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = (accessToken) => {
     localStorage.setItem('access_token', accessToken)
-    setLoggedIn(accessToken)
+    setLoggedIn(true)
   }
 
   const logout = () => {

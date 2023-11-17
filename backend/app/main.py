@@ -66,7 +66,7 @@ async def login(login_request: ImageData):
 
     # TODO: use image to get student id
     # ofc, fail if student id is not found
-    student_id = "12345678"
+    student_id = "1"
     return {"access_token": student_id}
 
 # route for sending email?

@@ -11,7 +11,7 @@ const App = () => {
   const { loggedIn } = useAuth()
   const navigate = useNavigate()
 
-  const calculateClassTimes = (data) => {
+  const processStudentInfo = (data) => {
     // 1st dimension: time slots (30 mins each)
     // 2nd dimension: days of the week (Monday to Sunday)
     // const class_times = []
@@ -21,7 +21,7 @@ const App = () => {
     }
 
     data.courses.forEach((course) => {
-      const { course_code, course_name, classes } = course
+      const { code, name, classes } = course
       course.classes.forEach((class_) => {
         const { start_time, end_time, day } = class_
         const [start_hour, start_minute] = start_time
@@ -35,8 +35,8 @@ const App = () => {
         const end_slot = end_hour * 2 + end_minute / 30
 
         class_times[start_slot][day] = {
-          course_code,
-          course_name,
+          code,
+          name,
           slot_length: end_slot - start_slot,
           ...class_,
         }
@@ -51,12 +51,12 @@ const App = () => {
     if (!loggedIn) {
       navigate('/login')
     } else {
-      fetch(`/student/${loggedIn}`)
+      fetch(`http://localhost:8000/student/${localStorage.getItem('access_token')}`)
         .then((res) => {
           return res.json()
         })
         .then((res) => {
-          setClassTimes(calculateClassTimes(res))
+          setClassTimes(processStudentInfo(res))
         })
         .catch((error) => {
           console.error('Error fetching classes:', error);

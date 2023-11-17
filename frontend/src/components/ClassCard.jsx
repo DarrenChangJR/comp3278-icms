@@ -49,7 +49,7 @@ const ClassCard = ({ class_ }) => {
             </IconButton>
           </Stack>
           <Typography variant="h6">
-            {class_.course_code} - {class_.course_name}
+            {class_.code} - {class_.name}
           </Typography>
           <Typography variant="subtitle1">
             {class_.class_type} {class_.start_time} - {class_.end_time}
@@ -76,10 +76,10 @@ const ClassCard = ({ class_ }) => {
         onClick={handleOpen}
       >
         <Typography variant="body2" color="white">
-          {class_.course_code}
+          {class_.code}
         </Typography>
         <Typography variant="caption" color="white">
-          {class_.course_name}
+          {class_.name}
         </Typography>
       </Stack>
     </>
