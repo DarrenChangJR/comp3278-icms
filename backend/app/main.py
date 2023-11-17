@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated
 import app.models as models
 from app.database import engine, SessionLocal
@@ -12,7 +13,19 @@ import base64
 
 app = FastAPI()
 
-# create the database tables and populate them with dummy data
+origins = [
+    "http://localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# create the database tables
 models.Base.metadata.create_all(bind=engine)
 with open("dummy.sql", "r") as file:
     sql_script = file.read()
@@ -53,7 +66,7 @@ async def login(login_request: ImageData):
 
     # TODO: use image to get student id
     # ofc, fail if student id is not found
-    student_id = "12345678"
+    student_id = "1"
     return {"access_token": student_id}
 
 # route for sending email?

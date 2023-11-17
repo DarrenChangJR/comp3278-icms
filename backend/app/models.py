@@ -90,8 +90,8 @@ class Class(Base):
     day = Column(String(64), nullable=False)
     type = Column(String(64), nullable=False) #could be boolean for lecture or tutorial
     zoom_link = Column(String(128), nullable=False)
-    start_time = Column(DateTime, nullable=False)
-    end_time = Column(DateTime, nullable=False)
+    start_time = Column(String(64), nullable=False)
+    end_time = Column(String(64), nullable=False)
 
     # many to one relationship with course table
     course = relationship("Course", back_populates="classes")
