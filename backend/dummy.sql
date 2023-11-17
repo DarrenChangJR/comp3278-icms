@@ -17,3 +17,7 @@ VALUES
 (1, "Nigga", "sky hall", '1', 'Tutorial', "dasgvhj", '13:30', '14:20'),
 (1, "How are u", "u hall", '2', 'Tutorial', "hjbasd", '13:30', '14:20'),
 (2, "Are you John Doe? Only He takes this class", "u hall", '4', 'Tutorial', "hjbasd", '13:30', '14:20');
+
+INSERT INTO note (course_id,note) VALUES
+(1, "ZHANG XICHEN IS AIDAN'S FATHER"),
+(2, "HI HOW ARE U MY SON");
