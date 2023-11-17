@@ -7,8 +7,10 @@ import {
   Stack,
   Typography,
   useTheme,
+  Button,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 
 const ClassCard = ({ class_ }) => {
   const { palette } = useTheme()
@@ -48,11 +50,27 @@ const ClassCard = ({ class_ }) => {
               <CloseIcon />
             </IconButton>
           </Stack>
-          <Typography variant="h6">
-            {class_.code} - {class_.name}
+          <Typography variant="h4" gutterBottom>
+            {class_.code}
           </Typography>
-          <Typography variant="subtitle1">
-            {class_.class_type} {class_.start_time} - {class_.end_time}
+          <Typography variant="h5" gutterBottom>
+            {class_.name}
+          </Typography>
+          <Typography variant="subtitle1" color="textSecondary">
+            {class_.location} ({class_.type}) {class_.start_time} -{' '}
+            {class_.end_time}
+          </Typography>
+          <Button
+            href={class_.zoom_link}
+            target="_blank"
+            rel="noopener noreferrer"
+            color="primary"
+            startIcon={<OpenInNewIcon />}
+          >
+            Join Zoom Meeting
+          </Button>
+          <Typography variant="body1" color="textPrimary" gutterBottom>
+            Teacher's Message: {class_.teacher_message}
           </Typography>
         </Box>
       </Modal>
