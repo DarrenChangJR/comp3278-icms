@@ -6,9 +6,7 @@ from app.database import engine, SessionLocal
 from app.schemas import ImageData, CourseBase, StudentBase, TakesBase
 from sqlalchemy.orm import Session
 from sqlalchemy import text, insert
-import io
-from PIL import Image
-import base64
+from app.FaceRecognition.faces import recognise_face
 
 
 app = FastAPI()
@@ -61,13 +59,8 @@ async def root():
 @app.post("/login")
 async def login(login_request: ImageData):
     image_data = login_request.image_data.replace("data:image/jpeg;base64,", "")
-    image_bytes = base64.b64decode(image_data)
-    image = Image.open(io.BytesIO(image_bytes))
-
-    # TODO: use image to get student id
-    # ofc, fail if student id is not found
-    student_id = "1"
-    return {"access_token": student_id}
+    result = recognise_face(image_data)
+    return result
 
 # route for sending email?
 
