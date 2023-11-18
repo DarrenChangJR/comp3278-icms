@@ -8,10 +8,15 @@ import { useAuth } from './auth/useAuth'
 const App = () => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [classTimes, setClassTimes] = useState(false)
+  const [studentInfo, setStudentInfo] = useState()
   const { loggedIn } = useAuth()
   const navigate = useNavigate()
-
+  
   const processStudentInfo = (data) => {
+    setStudentInfo({
+      name: data.name,
+      last_login: data.last_login,
+    })
     // 1st dimension: time slots (30 mins each)
     // 2nd dimension: days of the week (Monday to Sunday)
     // const class_times = []
@@ -34,18 +39,22 @@ const App = () => {
           .map((x) => parseInt(x))
         const end_slot = end_hour * 2 + end_minute / 30
 
-        class_times[start_slot][day] = {
+        if (!Array.isArray(class_times[start_slot][day])) {
+          class_times[start_slot][day] = []
+        }
+
+        class_times[start_slot][day].push({
           code,
           name,
           moodle_link,
           slot_length: end_slot - start_slot,
           notes,
           ...class_,
-        }
+        })
       })
     })
 
-    return class_times
+    setClassTimes(class_times)
   }
 
   // Redirect to login page if not logged in
@@ -58,7 +67,7 @@ const App = () => {
           return res.json()
         })
         .then((res) => {
-          setClassTimes(processStudentInfo(res))
+          processStudentInfo(res)
         })
         .catch((error) => {
           console.error('Error fetching classes:', error);
@@ -72,6 +81,7 @@ const App = () => {
         <SideBar
           drawerOpen={drawerOpen}
           handleClose={() => setDrawerOpen(false)}
+          studentInfo={studentInfo}
         />
 
         {/* Main content (calendar and upcoming class) */}

@@ -9,12 +9,10 @@ export default function WebcamStream() {
   const [isAllowed, setIsAllowed] = useState(false)
 
   if (!isAllowed) {
-    console.log('Requesting webcam access...')
     navigator.mediaDevices
       .getUserMedia({ video: true })
       .then((stream) => {
         videoRef.current.srcObject = stream
-        console.log('Webcam access granted')
         setIsAllowed(true)
       })
       .catch((error) => {

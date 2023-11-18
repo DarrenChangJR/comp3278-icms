@@ -14,12 +14,31 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import MenuIcon from '@mui/icons-material/Menu'
 import dayjs from 'dayjs'
+import isBetween from 'dayjs/plugin/isBetween'
+
+dayjs.extend(isBetween)
 
 const Calendar = ({ classTimes, handleMenuClick }) => {
   const { breakpoints, palette } = useTheme()
   const isMobile = useMediaQuery(breakpoints.down('md'))
   const now = useMemo(() => dayjs(), [])
   const [selectedDate, setSelectedDate] = useState(now)
+
+  const handleShouldOpen = (class_) => {
+    // Parse the start and end times to create dayjs objects
+    const classStartTime = dayjs()
+      .set('hour', parseInt(class_.start_time.split(':')[0]))
+      .set('minute', parseInt(class_.start_time.split(':')[1]))
+    const classEndTime = dayjs()
+      .set('hour', parseInt(class_.end_time.split(':')[0]))
+      .set('minute', parseInt(class_.end_time.split(':')[1]))
+
+    // Get the current time
+    const now = dayjs()
+
+    // Check if the current time is within 1 hour of the start time or if the class is currently ongoing
+    return now.isBetween(classStartTime.subtract(1, 'hour'), classEndTime)
+  }
 
   // Function to scroll to calendar marker
   const scrollToMarker = () => {
@@ -229,21 +248,26 @@ const Calendar = ({ classTimes, handleMenuClick }) => {
                       )}
 
                       {/* Class card */}
-                      {i > 0 && classTimes?.[i - 1]?.[day] && (
-                        console.log(dayjs(classTimes[i - 1][day].start_time)),
-                        <ClassCard
-                          class_={classTimes[i - 1][day]}
-                          shouldOpen={
-                            now.isAfter(
-                              dayjs(classTimes[i - 1][day].start_time).subtract(
-                                1,
-                                'hour',
-                              ),
-                            ) &&
-                            now.isBefore(dayjs(classTimes[i - 1][day].end_time))
-                          }
-                        />
-                      )}
+                      {i > 0 &&
+                        classTimes?.[i - 1]?.[day] &&
+                        classTimes[i - 1][day].map(
+                          (class_) =>
+                            dayjs(selectedDate).isBetween(
+                              dayjs(class_.start_date),
+                              dayjs(class_.end_date).add(6, 'day'),
+                              null,
+                              '[]',
+                            ) && (
+                              <ClassCard
+                                class_={class_}
+                                shouldOpen={
+                                  now.isSame(selectedDate) &&
+                                  now.day() === day &&
+                                  handleShouldOpen(class_)
+                                }
+                              />
+                            ),
+                        )}
                     </Grid>
                   )
                 })}

@@ -17,7 +17,7 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import LinkButton from './LinkButton'
 import { useAuth } from '../auth/useAuth'
 
-const SideBar = ({ drawerOpen, handleClose }) => {
+const SideBar = ({ drawerOpen, handleClose, studentInfo }) => {
   const drawerWidth = 210
   const { breakpoints } = useTheme()
   const isMobile = useMediaQuery(breakpoints.down('md'))
@@ -62,8 +62,13 @@ const SideBar = ({ drawerOpen, handleClose }) => {
             </IconButton>
           </Box>
         )}
-        <Typography variant="h4">Hello User</Typography>
-        <Typography variant="caption">Last Login: 11/12/2024 12:00</Typography>
+        <Typography variant="h4">Hello {studentInfo.name}</Typography>
+        <Typography variant="caption">
+          Login Time: <br />
+          {new Date(studentInfo.last_login).toLocaleDateString() +
+            ' ' +
+            new Date(studentInfo.last_login).toLocaleTimeString()}
+        </Typography>
         <Divider />
         <LinkButton
           LinkProps={{

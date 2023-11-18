@@ -24,19 +24,37 @@ const ClassCard = ({ class_, shouldOpen }) => {
     setOpen(false)
   }
 
+  const sendEmail = () => {
+    // just send student_id in POST body
+    fetch('http://localhost:8000/email-info', {
+      method: 'POST',
+      body: JSON.stringify({
+        student_id: localStorage.getItem('access_token'),
+      }),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((res) => {
+        return res.json()
+      })
+      .then((data) => {
+        console.log(data)
+      })
+  }
+
   // do foreach on the notes, and make them clickable links of notes.title that link to notes.notes_link
   const notes = class_.notes.map((noteObj) => {
     return (
-      <Button
-        key={noteObj.title}
-        href={noteObj.note_link}
-        target="_blank"
-        rel="noopener noreferrer"
-        color="primary"
-        endIcon={<OpenInNewIcon />}
-      >
-        {noteObj.title}
-      </Button>
+      <Box mb={1} key={noteObj.note_id}>
+        <Button
+          href={noteObj.note_link}
+          target="_blank"
+          rel="noopener noreferrer"
+          color="primary"
+          endIcon={<OpenInNewIcon />}
+        >
+          {noteObj.title}
+        </Button>
+      </Box>
     )
   })
 
@@ -49,6 +67,8 @@ const ClassCard = ({ class_, shouldOpen }) => {
           left="50%"
           sx={{
             transform: 'translate(-50%, -50%)',
+            overflowY: 'auto',
+            maxHeight: '90vh',
           }}
           width="40%"
           component={Paper}
@@ -109,17 +129,22 @@ const ClassCard = ({ class_, shouldOpen }) => {
             </Button>
           </Box>
           <Box mb={-1}>
-          <Typography variant="h6">
-            Teacher's Message:
-          </Typography>
+            <Typography variant="h6">Teacher's Message:</Typography>
           </Box>
-          <Typography variant="body1" gutterBottom style={{ textIndent: '2em', fontStyle: 'italic' }}>
-            "{class_.teacher_message}"
-          </Typography>
+          <Box component="span" sx={{ textIndent: '2em' }}>
+            <Typography variant="body1" gutterBottom>
+              <em>"{class_.teacher_message}"</em>
+            </Typography>
+          </Box>
           <Typography variant="h6" gutterBottom>
             Notes
           </Typography>
           {notes}
+          <Box display="flex" justifyContent="flex-end">
+            <Button color="primary" onClick={sendEmail} variant="outlined">
+              Send to Email
+            </Button>
+          </Box>
         </Box>
       </Modal>
       <Stack
