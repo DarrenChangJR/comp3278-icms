@@ -50,7 +50,7 @@ const ClassCard = ({ class_, shouldOpen }) => {
           sx={{
             transform: 'translate(-50%, -50%)',
           }}
-          width="400px"
+          width="40%"
           component={Paper}
           p={2}
           border={2}
@@ -72,7 +72,7 @@ const ClassCard = ({ class_, shouldOpen }) => {
             alignItems="center"
             mb={2}
           >
-            <Typography variant="h4" gutterBottom>
+            <Typography variant="h4" mb={-4}>
               {class_.code}
             </Typography>
             <Button
@@ -105,11 +105,16 @@ const ClassCard = ({ class_, shouldOpen }) => {
               color="primary"
               startIcon={<OpenInNewIcon />}
             >
-              Join Zoom Meeting
+              Zoom
             </Button>
           </Box>
-          <Typography variant="body1" color="textPrimary" gutterBottom>
-            Teacher's Message: {class_.teacher_message}
+          <Box mb={-1}>
+          <Typography variant="h6">
+            Teacher's Message:
+          </Typography>
+          </Box>
+          <Typography variant="body1" gutterBottom style={{ textIndent: '2em', fontStyle: 'italic' }}>
+            "{class_.teacher_message}"
           </Typography>
           <Typography variant="h6" gutterBottom>
             Notes
