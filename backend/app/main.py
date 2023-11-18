@@ -200,6 +200,20 @@ async def get_student(student_id: int, db: dp_dependency):
                     notes.append({"note_id":note_id, "course_id":course_id, "title":title, "note_link":note_link})
                 for class_ in result_class:
                     class_id,course_id, teacher_message, location, day, type, zoom_link, start_date, end_date, start_time, end_time = class_
+                    total_seconds = start_time.total_seconds()
+
+                    # Convert to hours, minutes, and seconds
+                    hours, remainder = divmod(total_seconds, 3600)
+                    minutes, _ = divmod(remainder, 60)
+
+                    # Format as a string
+                    start_time = f"{int(hours):02}:{int(minutes):02}"
+                    total_seconds = end_time.total_seconds()
+                    hours, remainder = divmod(total_seconds, 3600)
+                    minutes, _ = divmod(remainder, 60)
+                    end_time = f"{int(hours):02}:{int(minutes):02}"
+
+                    
                     classes.append({"class_id":class_id, "course_id":course_id, "teacher_message":teacher_message, "location":location, "day":day, "type":type, "zoom_link":zoom_link, "start_date":start_date, "end_date":end_date, "start_time":start_time, "end_time":end_time})
                 courses.append({"course_id":course_id, "code":code, "semester":semester, "academic_year":academic_year, "name":name, "moodle_link":moodle_link, "classes":classes, "notes":notes})
         return {"student_id":student_id, "name":name, "email":email, "last_login":last_login, "last_logout":last_logout, "courses":courses}
