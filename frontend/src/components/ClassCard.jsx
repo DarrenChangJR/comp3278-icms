@@ -13,7 +13,6 @@ import CloseIcon from '@mui/icons-material/Close'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 
 const ClassCard = ({ class_, shouldOpen }) => {
-  console.log(class_, shouldOpen);
   const { palette } = useTheme()
   const [open, setOpen] = useState(shouldOpen)
 
@@ -30,7 +29,7 @@ const ClassCard = ({ class_, shouldOpen }) => {
     return (
       <Button
         key={noteObj.title}
-        href={noteObj.notes_link}
+        href={noteObj.note_link}
         target="_blank"
         rel="noopener noreferrer"
         color="primary"
@@ -67,9 +66,25 @@ const ClassCard = ({ class_, shouldOpen }) => {
               <CloseIcon />
             </IconButton>
           </Stack>
-          <Typography variant="h4" gutterBottom>
-            {class_.code}
-          </Typography>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
+          >
+            <Typography variant="h4" gutterBottom>
+              {class_.code}
+            </Typography>
+            <Button
+              href={class_.moodle_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              color="primary"
+              startIcon={<OpenInNewIcon />}
+            >
+              Moodle
+            </Button>
+          </Box>
           <Typography variant="h5" gutterBottom>
             {class_.name}
           </Typography>
