@@ -65,9 +65,13 @@ async def root():
 
 
 @app.post("/login")
-async def login(login_request: ImageData):
+async def login(login_request: ImageData, db: dp_dependency):
     image_data = login_request.image_data.replace("data:image/jpeg;base64,", "")
     result = recognise_face(image_data)
+    if "access_token" in result:
+        stmt = text("UPDATE student SET last_login = NOW() WHERE student_id = :student_id")
+        db.execute(stmt, {"student_id":result["access_token"]})
+        db.commit()
     return result
 
 # route for sending email?
