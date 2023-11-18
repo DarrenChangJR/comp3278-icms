@@ -71,7 +71,7 @@ async def login(login_request: ImageData):
     return result
 
 # route for sending email?
-@app.post("/email_info/{student_id}")
+@app.post("/email-info")
 async def email_info(student_id: int, db: dp_dependency):
     stmt_email = text("SELECT email FROM student WHERE student_id = :student_id")
     result = db.execute(stmt_email, {"student_id":student_id}).fetchone()
