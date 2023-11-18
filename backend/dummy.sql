@@ -14,10 +14,10 @@ INSERT INTO takes (student_id, course_id) VALUES
 
 INSERT INTO class (course_id, teacher_message, location, day, type, zoom_link, start_date, end_date, start_time, end_time) 
 VALUES 
-(1, "HI", "csa", '1', 'Lecture', "njeklsd", '2023-01-17', '2023-05-30', '10:30:00', '11:20:00'),
-(1, "Nigga", "sky hall", '1', 'Tutorial', "dasgvhj", '2023-01-17', '2023-05-30', '11:30:00', '13:20:00'),
-(1, "How are u", "u hall", '2', 'Tutorial', "hjbasd", '2023-01-17', '2023-05-30', '13:30:00', '14:20:00'),
-(2, "Are you John Doe? Only He takes this class", "u hall", '4', 'Tutorial', "hjbasd",'2023-01-17', '2023-05-30', '13:30:00', '14:20:00');
+(1, "HI", "csa", '1', 'Lecture', "njeklsd", '2023-01-17', '2023-05-30', '10:30', '11:20'),
+(1, "Nigga", "sky hall", '1', 'Tutorial', "dasgvhj", '2023-01-17', '2023-05-30', '11:30', '13:20'),
+(1, "How are u", "u hall", '2', 'Tutorial', "hjbasd", '2023-01-17', '2023-05-30', '13:30', '14:20'),
+(2, "Are you John Doe? Only He takes this class", "u hall", '4', 'Tutorial', "hjbasd",'2023-01-17', '2023-05-30', '13:30', '14:20');
 
 INSERT INTO note (course_id, title, note_link) VALUES
 (1, "Lecture 1: Niggbase Diagrams", "father.com"),
