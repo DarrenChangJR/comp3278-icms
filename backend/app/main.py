@@ -6,7 +6,7 @@ from app.database import engine, SessionLocal
 from app.schemas import ImageData, CourseBase, StudentBase, TakesBase
 from sqlalchemy.orm import Session
 from sqlalchemy import text, insert
-# from app.FaceRecognition.faces import recognise_face
+from app.FaceRecognition.faces import recognise_face
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build

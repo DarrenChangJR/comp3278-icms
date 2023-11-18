@@ -1,7 +1,6 @@
 import numpy as np
 import mysql.connector
 import cv2
-import pyttsx3
 import pickle
 from datetime import datetime
 import base64
@@ -21,7 +20,7 @@ myconn = mysql.connector.connect(host=host, user=user, passwd=passwd, database=d
 cursor = myconn.cursor()
 
 
-#2 Load recognize and read label from model
+# 2 Load recognize and read label from model
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read("app/FaceRecognition/train.yml")
 
@@ -30,15 +29,9 @@ with open("app/FaceRecognition/labels.pickle", "rb") as f:
     labels = pickle.load(f)
     labels = {v: k for k, v in labels.items()}
 
-# create text to speech
-# engine = pyttsx3.init()
-# rate = engine.getProperty("rate")
-# engine.setProperty("rate", 175)
-
-# Define camera and detect face
 face_cascade = cv2.CascadeClassifier('app/FaceRecognition/haarcascade/haarcascade_frontalface_default.xml')
 
-# 3 Open the camera and start face recognition
+
 def recognise_face(image_data):
     current_datetime = datetime.now()
     image_bytes = base64.b64decode(image_data)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Table
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Table, Date, Time
 from sqlalchemy.orm import relationship, composite
 from app.database import Base
 
@@ -91,10 +91,10 @@ class Class(Base):
     day = Column(String(64), nullable=False)
     type = Column(String(64), nullable=False) # Could be boolean for lecture or tutorial
     zoom_link = Column(String(128), nullable=False)
-    start_date = Column(DateTime, nullable=False)
-    end_date = Column(DateTime, nullable=False)
-    start_time = Column(DateTime, nullable=False)
-    end_time = Column(DateTime, nullable=False)
+    start_date = Column(Date, nullable=False)
+    end_date = Column(Date, nullable=False)
+    start_time = Column(Time, nullable=False)
+    end_time = Column(Time, nullable=False)
 
     # many to one relationship with course table
     course = relationship("Course", back_populates="classes")
