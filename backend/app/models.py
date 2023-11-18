@@ -72,7 +72,7 @@ class Note(Base):
     __tablename__ = "note"
     note_id = Column(Integer, primary_key=True, index=True)
     course_id = Column(Integer, ForeignKey("course.course_id"))
-    title = Column(String(64), nullable=False)
+    title = Column(String(256), nullable=False)
     note_link = Column(String(256), nullable=False)
     
     # many to one relationship with course table
@@ -89,10 +89,12 @@ class Class(Base):
     teacher_message = Column(String(256), nullable=False)
     location = Column(String(64), nullable=False)
     day = Column(String(64), nullable=False)
-    type = Column(String(64), nullable=False) #could be boolean for lecture or tutorial
+    type = Column(String(64), nullable=False) # Could be boolean for lecture or tutorial
     zoom_link = Column(String(128), nullable=False)
-    start_time = Column(String(64), nullable=False)
-    end_time = Column(String(64), nullable=False)
+    start_date = Column(DateTime, nullable=False)
+    end_date = Column(DateTime, nullable=False)
+    start_time = Column(DateTime, nullable=False)
+    end_time = Column(DateTime, nullable=False)
 
     # many to one relationship with course table
     course = relationship("Course", back_populates="classes")
