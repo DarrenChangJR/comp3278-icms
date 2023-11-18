@@ -6,7 +6,7 @@ from app.database import engine, SessionLocal
 from app.schemas import ImageData, CourseBase, StudentBase, TakesBase
 from sqlalchemy.orm import Session
 from sqlalchemy import text, insert
-from app.FaceRecognition.faces import recognise_face
+# from app.FaceRecognition.faces import recognise_face
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
@@ -196,10 +196,10 @@ async def get_student(student_id: int, db: dp_dependency):
                 classes = []
                 notes = []
                 for note in result_note:
-                    note_id, course_id,note = note
-                    notes.append({"note_id":note_id, "course_id":course_id, "note":note})
+                    note_id, course_id, title, note_link = note
+                    notes.append({"note_id":note_id, "course_id":course_id, "title":title, "note_link":note_link})
                 for class_ in result_class:
-                    class_id,course_id, teacher_message, location, day, type, zoom_link, start_time, end_time = class_
-                    classes.append({"class_id":class_id, "course_id":course_id, "teacher_message":teacher_message, "location":location, "day":day, "type":type, "zoom_link":zoom_link, "start_time":start_time, "end_time":end_time})
+                    class_id,course_id, teacher_message, location, day, type, zoom_link, start_date, end_date, start_time, end_time = class_
+                    classes.append({"class_id":class_id, "course_id":course_id, "teacher_message":teacher_message, "location":location, "day":day, "type":type, "zoom_link":zoom_link, "start_date":start_date, "end_date":end_date, "start_time":start_time, "end_time":end_time})
                 courses.append({"course_id":course_id, "code":code, "semester":semester, "academic_year":academic_year, "name":name, "moodle_link":moodle_link, "classes":classes, "notes":notes})
         return {"student_id":student_id, "name":name, "email":email, "last_login":last_login, "last_logout":last_logout, "courses":courses}

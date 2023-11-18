@@ -72,7 +72,8 @@ class Note(Base):
     __tablename__ = "note"
     note_id = Column(Integer, primary_key=True, index=True)
     course_id = Column(Integer, ForeignKey("course.course_id"))
-    note = Column(String(256), nullable=False)
+    title = Column(String(64), nullable=False)
+    note_link = Column(String(256), nullable=False)
     
     # many to one relationship with course table
     course = relationship("Course", back_populates="notes")
