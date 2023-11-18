@@ -72,13 +72,6 @@ INSERT INTO note (course_id, title, note_link) VALUES
 (1, "Lecture 2: ER Model (Answers)", "https://moodle.hku.hk/mod/resource/view.php?id=3095353"),
 (1, "Lecture 2: Group Discussion", "https://moodle.hku.hk/mod/resource/view.php?id=3088157"),
 (1, "Lecture 3: ER Design", "https://moodle.hku.hk/mod/resource/view.php?id=3095373"),
-INSERT INTO note (course_id, title, note_link) VALUES
--- COMP3278
-(1, "Lecture 1: Introduction", "https://moodle.hku.hk/mod/resource/view.php?id=3081895"),
-(1, "Lecture 2: ER Model", "https://moodle.hku.hk/mod/resource/view.php?id=3081960"),
-(1, "Lecture 2: ER Model (Answers)", "https://moodle.hku.hk/mod/resource/view.php?id=3095353"),
-(1, "Lecture 2: Group Discussion", "https://moodle.hku.hk/mod/resource/view.php?id=3088157"),
-(1, "Lecture 3: ER Design", "https://moodle.hku.hk/mod/resource/view.php?id=3095373"),
 (1, "Lecture 4: SQL I", "https://moodle.hku.hk/mod/resource/view.php?id=3088156"),
 (1, "Lecture 4: SQL II", "https://moodle.hku.hk/mod/resource/view.php?id=3088156"),
 (1, "Lecture 5: SQL Queries", "https://moodle.hku.hk/mod/resource/view.php?id=3095377"),
