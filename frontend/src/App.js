@@ -21,8 +21,8 @@ const App = () => {
     }
 
     data.courses.forEach((course) => {
-      const { code, name, classes } = course
-      course.classes.forEach((class_) => {
+      const { code, name, classes, notes } = course
+      classes.forEach((class_) => {
         const { start_time, end_time, day } = class_
         const [start_hour, start_minute] = start_time
           .split(':')
@@ -38,6 +38,7 @@ const App = () => {
           code,
           name,
           slot_length: end_slot - start_slot,
+          notes,
           ...class_,
         }
       })

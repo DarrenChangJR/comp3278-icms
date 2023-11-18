@@ -230,7 +230,19 @@ const Calendar = ({ classTimes, handleMenuClick }) => {
 
                       {/* Class card */}
                       {i > 0 && classTimes?.[i - 1]?.[day] && (
-                        <ClassCard class_={classTimes[i - 1][day]} />
+                        console.log(dayjs(classTimes[i - 1][day].start_time)),
+                        <ClassCard
+                          class_={classTimes[i - 1][day]}
+                          shouldOpen={
+                            now.isAfter(
+                              dayjs(classTimes[i - 1][day].start_time).subtract(
+                                1,
+                                'hour',
+                              ),
+                            ) &&
+                            now.isBefore(dayjs(classTimes[i - 1][day].end_time))
+                          }
+                        />
                       )}
                     </Grid>
                   )
