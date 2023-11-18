@@ -27,28 +27,28 @@ INSERT INTO takes (student_id, course_id) VALUES
 INSERT INTO class (course_id, teacher_message, location, day, type, zoom_link, start_date, end_date, start_time, end_time) 
 VALUES 
 -- COMP3278 [DBMS]
-(1, "Median for SQL challenge was 2/10", "MWT1", '1', 'False', "https://hku.zoom.us/j/98307568693?pwd=QmlqZERWeDdWRVZ3SGdqWG51YUtndz09", '2023-10-09', '2023-10-09', '14:30', '15:20'),
-(1, "Median for SQL challenge was 2/10", "MWT1", '1', 'False', "https://hku.zoom.us/j/98307568693?pwd=QmlqZERWeDdWRVZ3SGdqWG51YUtndz09", '2023-09-07', '2023-10-12', '14:30', '15:20'),
-(1, "Median for SQL challenge was 2/10", "MWT1", '1', 'False', "https://hku.zoom.us/j/98307568693?pwd=QmlqZERWeDdWRVZ3SGdqWG51YUtndz09", '2023-10-30', '2023-11-27', '14:30', '15:20'),
-(1, "You may bring GPUs for the final exam", "MWT1", '4', 'True', "https://hku.zoom.us/j/98307568693?pwd=QmlqZERWeDdWRVZ3SGdqWG51YUtndz09", '2023-09-07', '2023-10-12', '13:30', '15:20'),
-(1, "You may bring GPUs for the final exam", "MWT1", '4', 'True', "https://hku.zoom.us/j/98307568693?pwd=QmlqZERWeDdWRVZ3SGdqWG51YUtndz09", '2023-10-26', '2023-11-30', '13:30', '15:20');
+(1, "Median for SQL challenge was 2/10", "MWT1", '1', '0', "https://hku.zoom.us/j/98307568693?pwd=QmlqZERWeDdWRVZ3SGdqWG51YUtndz09", '2023-10-09', '2023-10-09', '14:30', '15:20'),
+(1, "Median for SQL challenge was 2/10", "MWT1", '1', '0', "https://hku.zoom.us/j/98307568693?pwd=QmlqZERWeDdWRVZ3SGdqWG51YUtndz09", '2023-09-07', '2023-10-12', '14:30', '15:20'),
+(1, "Median for SQL challenge was 2/10", "MWT1", '1', '0', "https://hku.zoom.us/j/98307568693?pwd=QmlqZERWeDdWRVZ3SGdqWG51YUtndz09", '2023-10-30', '2023-11-27', '14:30', '15:20'),
+(1, "You may bring GPUs for the final exam", "MWT1", '4', '1', "https://hku.zoom.us/j/98307568693?pwd=QmlqZERWeDdWRVZ3SGdqWG51YUtndz09", '2023-09-07', '2023-10-12', '13:30', '15:20'),
+(1, "You may bring GPUs for the final exam", "MWT1", '4', '1', "https://hku.zoom.us/j/98307568693?pwd=QmlqZERWeDdWRVZ3SGdqWG51YUtndz09", '2023-10-26', '2023-11-30', '13:30', '15:20'),
 
 -- FINA1310 [Corporate Finance]
 
 -- COMP3230
-(3, "Please bring your computers to Tutorials", "CYCP1", '2', 'False', NULL, '2023-09-05', '2023-10-10', '10:30', '12:20'),
-(3, "Please bring your computers to Tutorials", "CYCP1", '2', 'False', NULL, '2023-10-24', '2023-11-28', '10:30', '12:20'),
-(3, "Please do the readings before lectures", "CYCP1", '4', 'True', NULL, '2023-09-07', '2023-10-12', '10:30', '12:20'),
-(3, "Reading Week is over, the finals are approaching", "CYCP1", '4', 'True', NULL, '2023-10-26', '2023-11-30', '10:30', '12:20'),
+(3, "Please bring your computers to Tutorials", "CYCP1", '2', '0', NULL, '2023-09-05', '2023-10-10', '10:30', '12:20'),
+(3, "Please bring your computers to Tutorials", "CYCP1", '2', '0', NULL, '2023-10-24', '2023-11-28', '10:30', '12:20'),
+(3, "Please do the readings before lectures", "CYCP1", '4', '1', NULL, '2023-09-07', '2023-10-12', '10:30', '12:20'),
+(3, "Reading Week is over, the finals are approaching", "CYCP1", '4', '1', NULL, '2023-10-26', '2023-11-30', '10:30', '12:20'),
 
 -- MATH3301
-(4, "Please prepare your questions for presentation", "MWT1", '4', 'False', NULL, '2023-09-07', '2023-10-12', '15:30', '16:20'),
-(4, "Please prepare your questions for presentation", "MWT1", '4', 'False', NULL, '2023-10-26', '2023-11-30', '15:30', '16:20'),
-(4, "Please do the exercises before the lecture!", "MB237", '4', 'True', NULL, '2023-09-07', '2023-10-12', '12:30', '13:20'),
-(4, "Please do the exercises before the lecture!", "MB237", '4', 'True', NULL, '2023-10-26', '2023-11-30', '12:30', '13:20'),
-(4, "Please do the exercises before the lecture!", "MB237", '1', 'Ture', NULL, '2023-09-04', '2023-09-25', '12:30', '14:20'),
-(4, "Please do the exercises before the lecture!", "MB237", '1', 'Ture', NULL, '2023-09-09', '2023-09-09', '12:30', '14:20'),
-(4, "Please do the exercises before the lecture!", "MB237", '1', 'Ture', NULL, '2023-10-30', '2023-11-27', '12:30', '14:20');
+(4, "Please prepare your questions for presentation", "MWT1", '4', '0', NULL, '2023-09-07', '2023-10-12', '15:30', '16:20'),
+(4, "Please prepare your questions for presentation", "MWT1", '4', '0', NULL, '2023-10-26', '2023-11-30', '15:30', '16:20'),
+(4, "Please do the exercises before the lecture!", "MB237", '4', '1', NULL, '2023-09-07', '2023-10-12', '12:30', '13:20'),
+(4, "Please do the exercises before the lecture!", "MB237", '4', '1', NULL, '2023-10-26', '2023-11-30', '12:30', '13:20'),
+(4, "Please do the exercises before the lecture!", "MB237", '1', '1', NULL, '2023-09-04', '2023-09-25', '12:30', '14:20'),
+(4, "Please do the exercises before the lecture!", "MB237", '1', '1', NULL, '2023-09-09', '2023-09-09', '12:30', '14:20'),
+(4, "Please do the exercises before the lecture!", "MB237", '1', '1', NULL, '2023-10-30', '2023-11-27', '12:30', '14:20');
 
 INSERT INTO note (course_id, title, note_link) VALUES
 (1, "Lecture 1: Introduction", "https://moodle.hku.hk/mod/resource/view.php?id=3081895"),
