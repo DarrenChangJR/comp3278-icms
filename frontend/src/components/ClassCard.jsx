@@ -12,9 +12,10 @@ import {
 import CloseIcon from '@mui/icons-material/Close'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 
-const ClassCard = ({ class_ }) => {
+const ClassCard = ({ class_, shouldOpen }) => {
+  console.log(class_, shouldOpen);
   const { palette } = useTheme()
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(shouldOpen)
 
   const handleOpen = () => {
     setOpen(true)
@@ -23,6 +24,22 @@ const ClassCard = ({ class_ }) => {
   const handleClose = () => {
     setOpen(false)
   }
+
+  // do foreach on the notes, and make them clickable links of notes.title that link to notes.notes_link
+  const notes = class_.notes.map((noteObj) => {
+    return (
+      <Button
+        key={noteObj.title}
+        href={noteObj.notes_link}
+        target="_blank"
+        rel="noopener noreferrer"
+        color="primary"
+        endIcon={<OpenInNewIcon />}
+      >
+        {noteObj.title}
+      </Button>
+    )
+  })
 
   return (
     <>
@@ -56,22 +73,33 @@ const ClassCard = ({ class_ }) => {
           <Typography variant="h5" gutterBottom>
             {class_.name}
           </Typography>
-          <Typography variant="subtitle1" color="textSecondary">
-            {class_.location} ({class_.type}) {class_.start_time} -{' '}
-            {class_.end_time}
-          </Typography>
-          <Button
-            href={class_.zoom_link}
-            target="_blank"
-            rel="noopener noreferrer"
-            color="primary"
-            startIcon={<OpenInNewIcon />}
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
           >
-            Join Zoom Meeting
-          </Button>
+            <Typography variant="subtitle1" color="textSecondary">
+              {class_.location} ({class_.type}) {class_.start_time} -{' '}
+              {class_.end_time}
+            </Typography>
+            <Button
+              href={class_.zoom_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              color="primary"
+              startIcon={<OpenInNewIcon />}
+            >
+              Join Zoom Meeting
+            </Button>
+          </Box>
           <Typography variant="body1" color="textPrimary" gutterBottom>
             Teacher's Message: {class_.teacher_message}
           </Typography>
+          <Typography variant="h6" gutterBottom>
+            Notes
+          </Typography>
+          {notes}
         </Box>
       </Modal>
       <Stack

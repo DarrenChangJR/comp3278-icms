@@ -50,6 +50,7 @@ export default function WebcamStream() {
         return res.json()
       })
       .then((data) => {
+        if (!data.access_token) return
         clearInterval(intervalId.current)
         const stream = videoRef.current.srcObject
         stream.getTracks().forEach((track) => {
