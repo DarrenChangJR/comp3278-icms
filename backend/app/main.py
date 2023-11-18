@@ -178,7 +178,7 @@ async def get_student(student_id: int, db: dp_dependency):
         return {"message": "Student not found"}
     else:
         #unpack the result from row first
-        student_id, name, email, last_login, last_logout = result_student
+        student_id, student_name, email, last_login, last_logout = result_student
         courses = []
         for course in result_courses:
             course_id = course[1]
@@ -219,4 +219,4 @@ async def get_student(student_id: int, db: dp_dependency):
                     
                     classes.append({"class_id":class_id, "course_id":course_id, "teacher_message":teacher_message, "location":location, "day":day, "type":type, "zoom_link":zoom_link, "start_date":start_date, "end_date":end_date, "start_time":start_time, "end_time":end_time})
                 courses.append({"course_id":course_id, "code":code, "semester":semester, "academic_year":academic_year, "name":name, "moodle_link":moodle_link, "classes":classes, "notes":notes})
-        return {"student_id":student_id, "name":name, "email":email, "last_login":last_login, "last_logout":last_logout, "courses":courses}
+        return {"student_id":student_id, "name":student_name, "email":email, "last_login":last_login, "last_logout":last_logout, "courses":courses}
