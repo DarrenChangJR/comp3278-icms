@@ -27,13 +27,15 @@ INSERT INTO takes (student_id, course_id) VALUES
 INSERT INTO class (course_id, teacher_message, location, day, type, zoom_link, start_date, end_date, start_time, end_time) 
 VALUES 
 -- COMP3278 [DBMS]
+(1, "Median for SQL challenge was 2/10", "MWT1", '1', '0', "https://hku.zoom.us/j/98307568693?pwd=QmlqZERWeDdWRVZ3SGdqWG51YUtndz09", '2023-09-04', '2023-09-25', '14:30', '15:20'),
 (1, "Median for SQL challenge was 2/10", "MWT1", '1', '0', "https://hku.zoom.us/j/98307568693?pwd=QmlqZERWeDdWRVZ3SGdqWG51YUtndz09", '2023-10-09', '2023-10-09', '14:30', '15:20'),
-(1, "Median for SQL challenge was 2/10", "MWT1", '1', '0', "https://hku.zoom.us/j/98307568693?pwd=QmlqZERWeDdWRVZ3SGdqWG51YUtndz09", '2023-09-07', '2023-10-12', '14:30', '15:20'),
 (1, "Median for SQL challenge was 2/10", "MWT1", '1', '0', "https://hku.zoom.us/j/98307568693?pwd=QmlqZERWeDdWRVZ3SGdqWG51YUtndz09", '2023-10-30', '2023-11-27', '14:30', '15:20'),
 (1, "You may bring GPUs for the final exam", "MWT1", '4', '1', "https://hku.zoom.us/j/98307568693?pwd=QmlqZERWeDdWRVZ3SGdqWG51YUtndz09", '2023-09-07', '2023-10-12', '13:30', '15:20'),
 (1, "You may bring GPUs for the final exam", "MWT1", '4', '1', "https://hku.zoom.us/j/98307568693?pwd=QmlqZERWeDdWRVZ3SGdqWG51YUtndz09", '2023-10-26', '2023-11-30', '13:30', '15:20'),
 
 -- FINA1310 [Corporate Finance]
+(2, "Please do the readings before lectures", "KKLG102", '2', '1', NULL, '2023-09-05', '2023-10-10', '13:30', '16:20'),
+(2, "Please do the readings before lectures", "KKLG102", '2', '1', NULL, '2023-10-24', '2023-11-28', '13:30', '16:20'),
 
 -- COMP3230
 (3, "Please bring your computers to Tutorials", "CYCP1", '2', '0', NULL, '2023-09-05', '2023-10-10', '10:30', '12:20'),
@@ -73,15 +75,15 @@ INSERT INTO note (course_id, title, note_link) VALUES
 (1, "Lecture 2: Group Discussion", "https://moodle.hku.hk/mod/resource/view.php?id=3088157"),
 (1, "Lecture 3: ER Design", "https://moodle.hku.hk/mod/resource/view.php?id=3095373"),
 (1, "Lecture 4: SQL I", "https://moodle.hku.hk/mod/resource/view.php?id=3088156"),
-(1, "Lecture 4: SQL II", "https://moodle.hku.hk/mod/resource/view.php?id=3088156"),
-(1, "Lecture 5: SQL Queries", "https://moodle.hku.hk/mod/resource/view.php?id=3095377"),
-(1, "Lecture 5: SQL Queries (Answers)", "https://moodle.hku.hk/mod/resource/view.php?id=3095377"),
-(1, "Lecture 6: Relational Algebra", "https://moodle.hku.hk/mod/resource/view.php?id=3095376"),
-(1, "Lecture 6: Relational Algebra (Answers)", "https://moodle.hku.hk/mod/resource/view.php?id=3095376"),
-(1, "Lecture 7: Functional Dependencies", "https://moodle.hku.hk/mod/resource/view.php?id=3095378"),
-(1, "Lecture 8: Database Design", "https://moodle.hku.hk/mod/resource/view.php?id=3095378"),
-(1, "Lecture 9: Indexing and Query Optimization", "https://moodle.hku.hk/mod/resource/view.php?id=3095379"),
-(1, "Lecture 10: Transactions and Concurrency Control", "https://moodle.hku.hk/mod/resource/view.php?id=3095380"),
+(1, "Lecture 5: SQL II", "https://moodle.hku.hk/mod/resource/view.php?id=3088156"),
+(1, "Lecture 6: SQL Queries", "https://moodle.hku.hk/mod/resource/view.php?id=3095377"),
+(1, "Lecture 6: SQL Queries (Answers)", "https://moodle.hku.hk/mod/resource/view.php?id=3095377"),
+(1, "Lecture 7: Relational Algebra", "https://moodle.hku.hk/mod/resource/view.php?id=3095376"),
+(1, "Lecture 7: Relational Algebra (Answers)", "https://moodle.hku.hk/mod/resource/view.php?id=3095376"),
+(1, "Lecture 8: Functional Dependencies", "https://moodle.hku.hk/mod/resource/view.php?id=3095378"),
+(1, "Lecture 9: Database Design", "https://moodle.hku.hk/mod/resource/view.php?id=3095378"),
+(1, "Lecture 10: Indexing and Query Optimization", "https://moodle.hku.hk/mod/resource/view.php?id=3095379"),
+(1, "Lecture 11: Transactions and Concurrency Control", "https://moodle.hku.hk/mod/resource/view.php?id=3095380"),
 
 -- FINA1310
 (2, "Lecture 1: Introduction to Corporate Finance", "https://moodle.hku.hk/mod/resource/view.php?id=3081896"),
