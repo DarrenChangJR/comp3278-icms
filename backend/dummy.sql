@@ -71,4 +71,35 @@ INSERT INTO note (course_id, title, note_link) VALUES
 (1, "Lecture 2: ER Model", "https://moodle.hku.hk/mod/resource/view.php?id=3081960"),
 (1, "Lecture 2: ER Model (Answers)", "https://moodle.hku.hk/mod/resource/view.php?id=3095353"),
 (1, "Lecture 2: Group Discussion", "https://moodle.hku.hk/mod/resource/view.php?id=3088157"),
-(1, "Lecture 3: ER Design", "https://moodle.hku.hk/mod/resource/view.php?id=3095373");
+(1, "Lecture 3: ER Design", "https://moodle.hku.hk/mod/resource/view.php?id=3095373"),
+INSERT INTO note (course_id, title, note_link) VALUES
+-- COMP3278
+(1, "Lecture 1: Introduction", "https://moodle.hku.hk/mod/resource/view.php?id=3081895"),
+(1, "Lecture 2: ER Model", "https://moodle.hku.hk/mod/resource/view.php?id=3081960"),
+(1, "Lecture 2: ER Model (Answers)", "https://moodle.hku.hk/mod/resource/view.php?id=3095353"),
+(1, "Lecture 2: Group Discussion", "https://moodle.hku.hk/mod/resource/view.php?id=3088157"),
+(1, "Lecture 3: ER Design", "https://moodle.hku.hk/mod/resource/view.php?id=3095373"),
+(1, "Lecture 4: SQL I", "https://moodle.hku.hk/mod/resource/view.php?id=3088156"),
+(1, "Lecture 4: SQL II", "https://moodle.hku.hk/mod/resource/view.php?id=3088156"),
+(1, "Lecture 5: SQL Queries", "https://moodle.hku.hk/mod/resource/view.php?id=3095377"),
+(1, "Lecture 5: SQL Queries (Answers)", "https://moodle.hku.hk/mod/resource/view.php?id=3095377"),
+(1, "Lecture 6: Relational Algebra", "https://moodle.hku.hk/mod/resource/view.php?id=3095376"),
+(1, "Lecture 6: Relational Algebra (Answers)", "https://moodle.hku.hk/mod/resource/view.php?id=3095376"),
+(1, "Lecture 7: Functional Dependencies", "https://moodle.hku.hk/mod/resource/view.php?id=3095378"),
+(1, "Lecture 8: Database Design", "https://moodle.hku.hk/mod/resource/view.php?id=3095378"),
+(1, "Lecture 9: Indexing and Query Optimization", "https://moodle.hku.hk/mod/resource/view.php?id=3095379"),
+(1, "Lecture 10: Transactions and Concurrency Control", "https://moodle.hku.hk/mod/resource/view.php?id=3095380"),
+
+-- FINA1310
+(2, "Lecture 1: Introduction to Corporate Finance", "https://moodle.hku.hk/mod/resource/view.php?id=3081896"),
+(2, "Lecture 2: Time Value of Money", "https://moodle.hku.hk/mod/resource/view.php?id=3081961"),
+(2, "Lecture 3: Financial Statements and Cash Flow", "https://moodle.hku.hk/mod/resource/view.php?id=3095354"),
+(2, "Lecture 4: Valuation of Bonds and Stocks", "https://moodle.hku.hk/mod/resource/view.php?id=3088158"),
+(2, "Lecture 5: Risk and Return", "https://moodle.hku.hk/mod/resource/view.php?id=3095374"),
+
+-- COMP3230
+(3, "Lecture 1: Introduction to Operating Systems", "https://moodle.hku.hk/mod/resource/view.php?id=3081897"),
+(3, "Lecture 2: Processes and Threads", "https://moodle.hku.hk/mod/resource/view.php?id=3081962"),
+(3, "Lecture 3: CPU Scheduling", "https://moodle.hku.hk/mod/resource/view.php?id=3095355"),
+(3, "Lecture 4: Memory Management", "https://moodle.hku.hk/mod/resource/view.php?id=3088159"),
+(3, "Lecture 5: File Systems", "https://moodle.hku.hk/mod/resource/view.php?id=3095375");
