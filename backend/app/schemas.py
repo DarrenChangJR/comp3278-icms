@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, date, time
 
 
 class ImageData(BaseModel):
@@ -8,8 +8,9 @@ class ImageData(BaseModel):
 
 
 class NoteBase(BaseModel):
-    note: str
     course_id: int
+    title: str
+    note_link: str
     
     class Config:
         from_attributes = True
@@ -21,8 +22,10 @@ class ClassBase(BaseModel):
     day: str
     type: str
     zoom_link: str
-    start_time: datetime
-    end_time: datetime
+    start_date: date
+    end_date: date
+    start_time: time
+    end_time: time
     
     class Config:
         from_attributes = True
