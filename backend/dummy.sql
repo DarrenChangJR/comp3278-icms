@@ -53,10 +53,10 @@ VALUES
 -- MATH3401
 (5, "Attempt the tutorial questions before class", "KKLG103", '5', '0', NULL, '2023-09-07', '2023-10-12', '13:30', '14:20'),
 (5, "Attempt the tutorial questions before class", "KKLG103", '5', '0', NULL, '2023-10-26', '2023-11-30', '13:30', '14:20'),
-(5, "I hate waking up in the morning too but I still come and teach!", "MB103", '1', '1', '2023-09-04', '2023-09-25', '09:30', '11:20'),
-(5, "I hate waking up in the morning too but I still come and teach!", "MB103", '1', '1', '2023-10-30', '2023-11-27', '09:30', '11:20'),
-(5, "I hate waking up in the morning too but I still come and teach!", "MB103", '4', '1', '2023-09-07', '2023-10-12', '09:30', '10:20'),
-(5, "I hate waking up in the morning too but I still come and teach!", "MB103", '4', '1', '2023-10-26', '2023-11-30', '09:30', '10:20'),
+(5, "I hate waking up in the morning too but I still come and teach!", "MB103", '1', '1', NULL, '2023-09-04', '2023-09-25', '09:30', '11:20'),
+(5, "I hate waking up in the morning too but I still come and teach!", "MB103", '1', '1', NULL, '2023-10-30', '2023-11-27', '09:30', '11:20'),
+(5, "I hate waking up in the morning too but I still come and teach!", "MB103", '4', '1', NULL, '2023-09-07', '2023-10-12', '09:30', '10:20'),
+(5, "I hate waking up in the morning too but I still come and teach!", "MB103", '4', '1', NULL, '2023-10-26', '2023-11-30', '09:30', '10:20'),
 
 -- COMP0297 [SWE]
 (8, "Zis is my startup: Una Technologies", "KB223", '5', '1', NULL, '2023-09-15', '2023-10-13', '17:30', '18:20'),
