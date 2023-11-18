@@ -202,6 +202,9 @@ async def get_student(student_id: int, db: dp_dependency):
                     class_id,course_id, teacher_message, location, day, type, zoom_link, start_date, end_date, start_time, end_time = class_
                     total_seconds = start_time.total_seconds()
 
+                    # Convert boolean "type" to Lecture/Tutorial [0: Tut, 1: Lec]
+                    type = 'Lecture' if (int(type)) else 'Tutorial' 
+
                     # Convert to hours, minutes, and seconds
                     hours, remainder = divmod(total_seconds, 3600)
                     minutes, _ = divmod(remainder, 60)
