@@ -1,4 +1,4 @@
-INSERT INTO student (name, email, last_login, last_logout) VALUES
+INSERT INTO student (name, email, last_login, last_active) VALUES
 ('Chang Darren Juin Rong', 'darrenjr@connect.hku.hk', '2023-01-02 12:00:00', '2023-01-02 12:10:00'),
 ('Zhang Xichen', 'u3584465@connect.hku.hk', '2023-11-11 16:00:00', '2023-01-02 17:10:00'),
 ('Wong Aidan Weng Seng','aidan21@connect.hku.hk','2023-11-18 01:25:00', '2023-11-11 11:11:11'),
