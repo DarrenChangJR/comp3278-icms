@@ -27,9 +27,12 @@ const ClassCard = ({ class_, shouldOpen }) => {
   const sendEmail = () => {
     const token = localStorage.getItem('access_token')
     fetch('http://localhost:8000/email-info', {
+      method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify(class_)
     })
       .then((res) => {
         return res.json()
