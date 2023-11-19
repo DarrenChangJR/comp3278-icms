@@ -257,9 +257,11 @@ const Calendar = ({ classTimes, handleMenuClick }) => {
                               dayjs(class_.end_date).add(6, 'day'),
                               null,
                               '[]',
-                            ) && (
+                            ) && 
+                            (
                               <ClassCard
-                                class_={class_}
+                                class_={{...class_,
+                                class_date: dayjs(selectedDate).day(day).format('YYYY-MM-DD')}}
                                 shouldOpen={
                                   now.isSame(selectedDate) &&
                                   now.day() === day &&
