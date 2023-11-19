@@ -62,3 +62,8 @@ class TakesBase(BaseModel):
     
     class Config:
         from_attributes = True
+
+class EmailData(BaseModel):
+    class_id: int
+    course_id: int
+    class_date: str

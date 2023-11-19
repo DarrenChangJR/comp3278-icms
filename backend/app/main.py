@@ -7,10 +7,11 @@ from sqlalchemy import text, insert
 from sqlalchemy.orm import Session
 
 import app.models as models
+import json
 from app.FaceRecognition.faces import recognise_face
 from app.database import engine, SessionLocal
 from app.email_utils import send_email_info
-from app.schemas import ImageData, CourseBase, StudentBase, TakesBase
+from app.schemas import ImageData, CourseBase, StudentBase, TakesBase,EmailData
 from app.token_utils import create_access_token, verify_token
 
 
@@ -54,6 +55,60 @@ def get_db():
 
 dp_dependency = Annotated[Session, Depends(get_db)]
 
+def get_student_info(db: dp_dependency, student_id):
+    stmt_student = text("SELECT * FROM student WHERE student_id = :student_id")
+    stmt_courses = text("SELECT * FROM takes WHERE student_id = :student_id")
+    result_student = db.execute(stmt_student, {"student_id":student_id}).fetchone()
+    result_courses = db.execute(stmt_courses, {"student_id":student_id}).fetchall()
+    if result_student is None:
+        return {"message": "Student not found"}
+    else:
+        #unpack the result from row first
+        student_id, student_name, email, last_login, last_active = result_student
+        courses = []
+        for course in result_courses:
+            course_id = course[1]
+            stmt_course = text("SELECT * FROM course WHERE course_id = :course_id")
+            stmt_class = text("SELECT * FROM class WHERE course_id = :course_id")
+            stmt_note = text("SELECT * FROM note WHERE course_id = :course_id")
+            result_course = db.execute(stmt_course, {"course_id":course_id}).fetchone()
+            result_class = db.execute(stmt_class, {"course_id":course_id}).fetchall()
+            result_note = db.execute(stmt_note, {"course_id":course_id}).fetchall()
+            if result_course is None:
+                return {"message": "Course not found"}
+            else:
+                #unpack the result from row first
+                course_id, code, semester, academic_year, name, moodle_link = result_course
+                classes = []
+                notes = []
+                for note in result_note:
+                    note_id, course_id, title, note_link = note
+                    notes.append({"note_id":note_id, "course_id":course_id, "title":title, "note_link":note_link})
+                for class_ in result_class:
+                    class_id,course_id, teacher_message, location, day, type, zoom_link, start_date, end_date, start_time, end_time = class_
+                    total_seconds = start_time.total_seconds()
+
+                    # Convert boolean "type" to Lecture/Tutorial [0: Tut, 1: Lec]
+                    type = 'Lecture' if (int(type)) else 'Tutorial' 
+
+                    # Convert to hours, minutes, and seconds
+                    hours, remainder = divmod(total_seconds, 3600)
+                    minutes, _ = divmod(remainder, 60)
+
+                    # Format as a string
+                    start_time = f"{int(hours):02}:{int(minutes):02}"
+                    total_seconds = end_time.total_seconds()
+                    hours, remainder = divmod(total_seconds, 3600)
+                    minutes, _ = divmod(remainder, 60)
+                    end_time = f"{int(hours):02}:{int(minutes):02}"
+
+                    
+                    classes.append({"class_id":class_id, "course_id":course_id, "teacher_message":teacher_message, "location":location, "day":day, "type":type, "zoom_link":zoom_link, "start_date":start_date, "end_date":end_date, "start_time":start_time, "end_time":end_time})
+                courses.append({"course_id":course_id, "code":code, "semester":semester, "academic_year":academic_year, "name":name, "moodle_link":moodle_link, "classes":classes, "notes":notes})
+        return {"student_id":student_id, "name":student_name, "email":email, "last_login":last_login, "last_active":last_active, "courses":courses}
+
+
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
@@ -89,23 +144,54 @@ async def login(login_request: ImageData, db: dp_dependency):
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-@app.get("/email-info")
-async def email_info(db: dp_dependency, current_user: dict = Depends(get_current_user)):
+@app.post("/email-info")
+async def email_info(db: dp_dependency, email_data: EmailData, current_user: dict = Depends(get_current_user)):
     student_id = current_user.get("sub")
     stmt_email = text("SELECT email FROM student WHERE student_id = :student_id")
+    stmt_name = text("SELECT name FROM student WHERE student_id = :student_id")
     result = db.execute(stmt_email, {"student_id":student_id}).fetchone()
+    name = db.execute(stmt_name, {"student_id":student_id}).fetchone()
+    name = name[0]
     if result is None:
         return {"Error": "Student not found"}
     else:
         email = result[0]
         
         # TODO: Get the information about the class with sql query
+        class_id = int(email_data.class_id)
+        course_id = int(email_data.course_id)
+        class_date = email_data.class_date
+        content = get_student_info(db,student_id)
+        # keep the content with same class_id and course_id in content remove other
+        filtered_courses = []
+        for course in content["courses"]:
+            if course["course_id"] == course_id:
+                filtered_classes = [class_ for class_ in course["classes"] if class_["class_id"] == class_id]
+                if filtered_classes:
+                    course["classes"] = filtered_classes
+                    filtered_courses.append(course)
+        content["courses"] = filtered_courses
+        content["class_date"] = class_date
+        # change the datetime object to string
+        for course in content["courses"]:
+            for class_ in course["classes"]:
+                #strftime('%Y-%m-%d %H:%M:%S')
+                class_["start_date"] = class_["start_date"].strftime('%Y-%m-%d')
+                class_["end_date"] = class_["end_date"].strftime('%Y-%m-%d')
+                # class_["start_time"] = class_["start_time"].strftime('%H:%M:%S')
+                # class_["end_time"] = class_["end_time"].strftime('%H:%M:%S')
+        content["last_login"] = content["last_login"].strftime('%Y-%m-%d %H:%M:%S')
+        content["last_active"] = content["last_active"].strftime('%Y-%m-%d %H:%M:%S')
+        content = json.dumps(content, indent=4)
+
         
 
+        title =name + "'s class information"
+        # change every datetime object to string
         try:
             send_email_info(email,
-                            "Your attendance report",
-                            "Testing this out"
+                            title,
+                            content
             )
             return {"Completion": "success"} 
         except Exception as e:
@@ -158,53 +244,4 @@ async def create_take(take: TakesBase, db: dp_dependency):
 @app.get('/student/me')
 async def get_student(db: dp_dependency, current_user: dict = Depends(get_current_user)):
     student_id = current_user.get("sub")
-    stmt_student = text("SELECT * FROM student WHERE student_id = :student_id")
-    stmt_courses = text("SELECT * FROM takes WHERE student_id = :student_id")
-    result_student = db.execute(stmt_student, {"student_id":student_id}).fetchone()
-    result_courses = db.execute(stmt_courses, {"student_id":student_id}).fetchall()
-    if result_student is None:
-        return {"message": "Student not found"}
-    else:
-        #unpack the result from row first
-        student_id, student_name, email, last_login, last_active = result_student
-        courses = []
-        for course in result_courses:
-            course_id = course[1]
-            stmt_course = text("SELECT * FROM course WHERE course_id = :course_id")
-            stmt_class = text("SELECT * FROM class WHERE course_id = :course_id")
-            stmt_note = text("SELECT * FROM note WHERE course_id = :course_id")
-            result_course = db.execute(stmt_course, {"course_id":course_id}).fetchone()
-            result_class = db.execute(stmt_class, {"course_id":course_id}).fetchall()
-            result_note = db.execute(stmt_note, {"course_id":course_id}).fetchall()
-            if result_course is None:
-                return {"message": "Course not found"}
-            else:
-                #unpack the result from row first
-                course_id, code, semester, academic_year, name, moodle_link = result_course
-                classes = []
-                notes = []
-                for note in result_note:
-                    note_id, course_id, title, note_link = note
-                    notes.append({"note_id":note_id, "course_id":course_id, "title":title, "note_link":note_link})
-                for class_ in result_class:
-                    class_id,course_id, teacher_message, location, day, type, zoom_link, start_date, end_date, start_time, end_time = class_
-                    total_seconds = start_time.total_seconds()
-
-                    # Convert boolean "type" to Lecture/Tutorial [0: Tut, 1: Lec]
-                    type = 'Lecture' if (int(type)) else 'Tutorial' 
-
-                    # Convert to hours, minutes, and seconds
-                    hours, remainder = divmod(total_seconds, 3600)
-                    minutes, _ = divmod(remainder, 60)
-
-                    # Format as a string
-                    start_time = f"{int(hours):02}:{int(minutes):02}"
-                    total_seconds = end_time.total_seconds()
-                    hours, remainder = divmod(total_seconds, 3600)
-                    minutes, _ = divmod(remainder, 60)
-                    end_time = f"{int(hours):02}:{int(minutes):02}"
-
-                    
-                    classes.append({"class_id":class_id, "course_id":course_id, "teacher_message":teacher_message, "location":location, "day":day, "type":type, "zoom_link":zoom_link, "start_date":start_date, "end_date":end_date, "start_time":start_time, "end_time":end_time})
-                courses.append({"course_id":course_id, "code":code, "semester":semester, "academic_year":academic_year, "name":name, "moodle_link":moodle_link, "classes":classes, "notes":notes})
-        return {"student_id":student_id, "name":student_name, "email":email, "last_login":last_login, "last_active":last_active, "courses":courses}
+    return get_student_info(db,student_id)
