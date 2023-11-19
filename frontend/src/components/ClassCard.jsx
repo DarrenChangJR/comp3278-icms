@@ -25,13 +25,11 @@ const ClassCard = ({ class_, shouldOpen }) => {
   }
 
   const sendEmail = () => {
-    // just send student_id in POST body
+    const token = localStorage.getItem('access_token')
     fetch('http://localhost:8000/email-info', {
-      method: 'POST',
-      body: JSON.stringify({
-        student_id: localStorage.getItem('access_token'),
-      }),
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
       .then((res) => {
         return res.json()

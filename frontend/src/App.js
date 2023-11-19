@@ -11,7 +11,7 @@ const App = () => {
   const [studentInfo, setStudentInfo] = useState()
   const { loggedIn } = useAuth()
   const navigate = useNavigate()
-  
+
   const processStudentInfo = (data) => {
     setStudentInfo({
       name: data.name,
@@ -62,16 +62,39 @@ const App = () => {
     if (!loggedIn) {
       navigate('/login')
     } else {
-      fetch(`http://localhost:8000/student/${localStorage.getItem('access_token')}`)
+      const token = localStorage.getItem('access_token')
+      fetch(`http://localhost:8000/student/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
         .then((res) => {
+          if (!res.ok) {
+            throw new Error('Network response was not ok')
+          }
           return res.json()
         })
         .then((res) => {
           processStudentInfo(res)
         })
         .catch((error) => {
-          console.error('Error fetching classes:', error);
+          console.error('Error fetching classes:', error)
         })
+
+      const intervalId = setInterval(() => {
+        fetch('http://localhost:8000/ping', {
+          method: 'HEAD',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }).catch((error) => {
+          console.error('Error sending ping:', error)
+        })
+      }, 60000)
+
+      return () => {
+        clearInterval(intervalId)
+      }
     }
   }, [loggedIn, navigate])
 
