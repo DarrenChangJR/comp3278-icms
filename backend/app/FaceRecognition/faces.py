@@ -25,15 +25,13 @@ def recognise_face(image_data):
 
     for (x, y, w, h) in faces:
         roi_gray = gray[y:y + h, x:x + w]
-        roi_color = frame[y:y + h, x:x + w]
         # predict the id and confidence for faces
         id_, conf = recognizer.predict(roi_gray)
 
         # If the face is recognized
         if conf >= 60:
             student_id = labels[id_]
-            return {"access_token": student_id}
+            return student_id
 
-        # If the face is unrecognized
-        else:
-            return {"Error": "Face not recognized"}
+    # If the face is unrecognized
+    return None

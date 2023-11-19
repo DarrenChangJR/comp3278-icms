@@ -36,12 +36,12 @@ class Student(Base):
     name = Column(String(64), nullable=False)
     email = Column(String(64), nullable=False, unique=True)
     last_login = Column(DateTime, nullable=False)
-    last_logout = Column(DateTime, nullable=False)
+    last_active = Column(DateTime, nullable=False)
     
     #derived attribute 
     @property
     def last_stay_for(self):
-        return self.last_logout - self.last_login
+        return self.last_active - self.last_login
         
     # many to many relationship with course table
     take_course = relationship("Course", secondary=Takes, back_populates="has_student")

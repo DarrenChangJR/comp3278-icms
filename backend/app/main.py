@@ -1,20 +1,17 @@
-from fastapi import FastAPI, Depends
-from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated
-import app.models as models
-from app.database import engine, SessionLocal
-from app.schemas import ImageData, CourseBase, StudentBase, TakesBase
-from sqlalchemy.orm import Session
+
+from fastapi import FastAPI, Depends, HTTPException, status, Response
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import text, insert
+from sqlalchemy.orm import Session
+
+import app.models as models
 from app.FaceRecognition.faces import recognise_face
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-from google.oauth2.credentials import Credentials
-from email.mime.text import MIMEText
-import base64
-import os
+from app.database import engine, SessionLocal
+from app.email_utils import send_email_info
+from app.schemas import ImageData, CourseBase, StudentBase, TakesBase
+from app.token_utils import create_access_token, verify_token
 
 
 app = FastAPI()
@@ -57,6 +54,17 @@ def get_db():
 
 dp_dependency = Annotated[Session, Depends(get_db)]
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    user = verify_token(token)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
 
 # main page route (could be used for login?)
 @app.get("/")
@@ -67,16 +75,23 @@ async def root():
 @app.post("/login")
 async def login(login_request: ImageData, db: dp_dependency):
     image_data = login_request.image_data.replace("data:image/jpeg;base64,", "")
-    result = recognise_face(image_data)
-    if "access_token" in result:
+    student_id = recognise_face(image_data)
+    if student_id is not None:
         stmt = text("UPDATE student SET last_login = NOW() WHERE student_id = :student_id")
-        db.execute(stmt, {"student_id":result["access_token"]})
+        db.execute(stmt, {"student_id":student_id})
         db.commit()
-    return result
+        token = create_access_token(data={"sub": student_id})
+        return {"access_token": token, "token_type": "bearer"}
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
-# route for sending email?
-@app.post("/email-info")
-async def email_info(student_id: int, db: dp_dependency):
+@app.get("/email-info")
+async def email_info(db: dp_dependency, current_user: dict = Depends(get_current_user)):
+    student_id = current_user.get("sub")
     stmt_email = text("SELECT email FROM student WHERE student_id = :student_id")
     result = db.execute(stmt_email, {"student_id":student_id}).fetchone()
     if result is None:
@@ -86,58 +101,26 @@ async def email_info(student_id: int, db: dp_dependency):
         
         # TODO: Get the information about the class with sql query
         
-        # Send the email
-        # If modifying these SCOPES, delete the file token.json.
-        SCOPES = ['https://www.googleapis.com/auth/gmail.send']
-        
-        def create_message(sender, to, subject, message_text):
-            message = MIMEText(message_text)
-            message['to'] = to
-            message['from'] = sender
-            message['subject'] = subject
-            return {'raw': base64.urlsafe_b64encode(message.as_string().encode()).decode()}
 
-        def send_message(service, user_id, message):
-            try:
-                message = (service.users().messages().send(userId=user_id, body=message).execute())
-                # print('Message Id: %s' % message['id'])
-                return message
-            except HttpError as error:
-                print('An error occurred: %s' % error)
-
-        def send_email():
-            creds = None
-            if os.path.exists('token.json'):
-                creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-            if not creds or not creds.valid:
-                if creds and creds.expired and creds.refresh_token:
-                    creds.refresh(Request())
-                else:
-                    flow = InstalledAppFlow.from_client_secrets_file(
-                        'credentials.json', SCOPES)
-                    creds = flow.run_local_server(port=0)
-                with open('token.json', 'w') as token:
-                    token.write(creds.to_json())
-                    
-            service = build('gmail', 'v1', credentials=creds)
-            sender = "comp3278t@gmail.com"
-            to = email
-            subject = "Your attendance report"
-            message_text = "Testing this out"
-            message = create_message(sender, to, subject, message_text)
-            send_message(service, "me", message)
-        
         try:
-            send_email()
+            send_email_info(email,
+                            "Your attendance report",
+                            "Testing this out"
+            )
             return {"Completion": "success"} 
         except Exception as e:
             print(f"An error occurred: {e}")
             return {"Error": "Failure to send email"}
 
-
+@app.head("/ping")
+async def ping(db: dp_dependency, current_user: dict = Depends(get_current_user)):
+    user_id = current_user.get("sub")
+    stmt = text("UPDATE student SET last_active = NOW() WHERE student_id = :student_id")
+    db.execute(stmt, {"student_id": user_id})
+    db.commit()
+    return Response(status_code=200)
  
 # creating database with API calls
-# Note StudentBase is a pydantic model
 @app.post("/create_student")
 async def create_student(student: StudentBase, db: dp_dependency):
     db_student = models.Student(**student.model_dump())
@@ -172,8 +155,9 @@ async def create_take(take: TakesBase, db: dp_dependency):
     db.execute(stmt)
     db.commit()
 
-@app.get('/student/{student_id}')
-async def get_student(student_id: int, db: dp_dependency):
+@app.get('/student/me')
+async def get_student(db: dp_dependency, current_user: dict = Depends(get_current_user)):
+    student_id = current_user.get("sub")
     stmt_student = text("SELECT * FROM student WHERE student_id = :student_id")
     stmt_courses = text("SELECT * FROM takes WHERE student_id = :student_id")
     result_student = db.execute(stmt_student, {"student_id":student_id}).fetchone()
@@ -182,7 +166,7 @@ async def get_student(student_id: int, db: dp_dependency):
         return {"message": "Student not found"}
     else:
         #unpack the result from row first
-        student_id, student_name, email, last_login, last_logout = result_student
+        student_id, student_name, email, last_login, last_active = result_student
         courses = []
         for course in result_courses:
             course_id = course[1]
@@ -223,4 +207,4 @@ async def get_student(student_id: int, db: dp_dependency):
                     
                     classes.append({"class_id":class_id, "course_id":course_id, "teacher_message":teacher_message, "location":location, "day":day, "type":type, "zoom_link":zoom_link, "start_date":start_date, "end_date":end_date, "start_time":start_time, "end_time":end_time})
                 courses.append({"course_id":course_id, "code":code, "semester":semester, "academic_year":academic_year, "name":name, "moodle_link":moodle_link, "classes":classes, "notes":notes})
-        return {"student_id":student_id, "name":student_name, "email":email, "last_login":last_login, "last_logout":last_logout, "courses":courses}
+        return {"student_id":student_id, "name":student_name, "email":email, "last_login":last_login, "last_active":last_active, "courses":courses}

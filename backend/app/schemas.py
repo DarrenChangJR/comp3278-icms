@@ -50,7 +50,7 @@ class StudentBase(BaseModel):
     name: str
     email: str
     last_login: datetime
-    last_logout: datetime
+    last_active: datetime
     
     class Config:
         from_attributes = True
