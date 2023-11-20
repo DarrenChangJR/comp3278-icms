@@ -96,7 +96,8 @@ def get_student_info(db: dp_dependency, student_id):
                 "course_name": row['course_name'],
                 "moodle_link": row['moodle_link'],
                 "classes": [],
-                "notes": []
+                "notes": [],
+                "note_ids": set()
             }
 
         start_time = str(row['start_time'])
@@ -120,13 +121,20 @@ def get_student_info(db: dp_dependency, student_id):
             "end_time": end_time
         })
 
-        courses[course_id]['notes'].append({
-            "note_id": row['note_id'],
-            "course_id": row['course_id'],
-            "title": row['title'],
-            "note_link": row['note_link']
-        })
+        note_id = row['note_id']
+        if note_id not in courses[course_id]['note_ids']:
+            courses[course_id]['notes'].append({
+                "note_id": row['note_id'],
+                "course_id": row['course_id'],
+                "title": row['title'],
+                "note_link": row['note_link']
+            })
+            courses[course_id]['note_ids'].add(note_id)
 
+    # remove note_ids from courses
+    for course in courses.values():
+        del course['note_ids']
+    
     return {
         "student_id": row['student_id'],
         "name": row['name'],
