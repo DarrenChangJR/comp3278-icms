@@ -107,7 +107,7 @@ const ClassCard = ({ class_, shouldOpen }) => {
             </Button>
           </Box>
           <Typography variant="h5" gutterBottom>
-            {class_.name}
+            {class_.course_name}
           </Typography>
           <Box
             display="flex"
@@ -171,7 +171,7 @@ const ClassCard = ({ class_, shouldOpen }) => {
           {class_.code}
         </Typography>
         <Typography variant="caption" color="white">
-          {class_.name}
+          {class_.course_name}
         </Typography>
       </Stack>
     </>

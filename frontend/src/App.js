@@ -26,7 +26,7 @@ const App = () => {
     }
 
     data.courses.forEach((course) => {
-      const { code, name, moodle_link, classes, notes } = course
+      const { code, course_name, moodle_link, classes, notes } = course
       classes.forEach((class_) => {
         const { start_time, end_time, day } = class_
         const [start_hour, start_minute] = start_time
@@ -45,7 +45,7 @@ const App = () => {
 
         class_times[start_slot][day].push({
           code,
-          name,
+          course_name,
           moodle_link,
           slot_length: end_slot - start_slot,
           notes,
