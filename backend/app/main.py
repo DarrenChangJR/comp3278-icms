@@ -97,44 +97,50 @@ def get_student_info(db: dp_dependency, student_id):
                 "moodle_link": row['moodle_link'],
                 "classes": [],
                 "notes": [],
-                "note_ids": set()
+                "note_ids": set(),
+                "class_ids": set(),
             }
 
-        start_time = str(row['start_time'])
-        end_time = str(row['end_time'])
+        class_id = row['class_id']
+        if class_id not in courses[course_id]['class_ids']:
+            courses[course_id]['class_ids'].add(class_id)
 
-        # Extract only the hours and minutes
-        start_time = start_time.split(":")[0] + ":" + start_time.split(":")[1]
-        end_time = end_time.split(":")[0] + ":" + end_time.split(":")[1]
+            start_time = str(row['start_time'])
+            end_time = str(row['end_time'])
 
-        courses[course_id]['classes'].append({
-            "class_id": row['class_id'],
-            "course_id": row['course_id'],
-            "teacher_message": row['teacher_message'],
-            "location": row['location'],
-            "day": row['day'],
-            "type": 'Lecture' if (int(row['type'])) else 'Tutorial',
-            "zoom_link": row['zoom_link'],
-            "start_date": row['start_date'],
-            "end_date": row['end_date'],
-            "start_time": start_time,
-            "end_time": end_time
-        })
+            # Extract only the hours and minutes
+            start_time = start_time.split(":")[0] + ":" + start_time.split(":")[1]
+            end_time = end_time.split(":")[0] + ":" + end_time.split(":")[1]
+
+            courses[course_id]['classes'].append({
+                "class_id": row['class_id'],
+                "course_id": row['course_id'],
+                "teacher_message": row['teacher_message'],
+                "location": row['location'],
+                "day": row['day'],
+                "type": 'Lecture' if (int(row['type'])) else 'Tutorial',
+                "zoom_link": row['zoom_link'],
+                "start_date": row['start_date'],
+                "end_date": row['end_date'],
+                "start_time": start_time,
+                "end_time": end_time
+            })
 
         note_id = row['note_id']
         if note_id not in courses[course_id]['note_ids']:
+            courses[course_id]['note_ids'].add(note_id)
             courses[course_id]['notes'].append({
                 "note_id": row['note_id'],
                 "course_id": row['course_id'],
                 "title": row['title'],
                 "note_link": row['note_link']
             })
-            courses[course_id]['note_ids'].add(note_id)
 
     # remove note_ids from courses
     for course in courses.values():
         del course['note_ids']
-    
+        del course['class_ids']
+
     return {
         "student_id": row['student_id'],
         "name": row['name'],
