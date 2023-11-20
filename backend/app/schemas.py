@@ -35,7 +35,7 @@ class CourseBase(BaseModel):
     code: str
     semester: str
     academic_year: str
-    name: str
+    course_name: str
     moodle_link: str
     
     # one to many relationship with note table & class table
