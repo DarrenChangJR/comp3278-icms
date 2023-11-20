@@ -46,11 +46,11 @@ const ClassCard = ({ class_, shouldOpen }) => {
       })
   }
 
-  // do foreach on the notes, and make them clickable links of notes.title that link to notes.notes_link
   const notes = class_.notes.map((noteObj) => {
     return (
       <Box mb={1} key={noteObj.note_id}>
         <Button
+          key={noteObj.note_id}
           href={noteObj.note_link}
           target="_blank"
           rel="noopener noreferrer"
