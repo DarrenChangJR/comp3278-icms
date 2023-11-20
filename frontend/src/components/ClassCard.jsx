@@ -32,7 +32,11 @@ const ClassCard = ({ class_, shouldOpen }) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(class_)
+      body: JSON.stringify({
+        class_id: class_.class_id,
+        course_id: class_.course_id,
+        class_date: class_.class_date,
+      })
     })
       .then((res) => {
         return res.json()

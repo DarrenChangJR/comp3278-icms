@@ -5,8 +5,8 @@ INSERT INTO student (name, email, last_login, last_active) VALUES
 ('Ziya Shaheer','shaheer@connect.hku.hk','2023-11-18 01:25:00', '2023-11-11 11:11:11'),
 ('Yaw Jalik','u3572943@connect.hku.hk','2023-11-18 01:25:00', '2023-11-11 11:11:11');
 
-INSERT INTO course (code, semester, academic_year, name, moodle_link) VALUES
--- COMP3278 : 1, FINA1310: 2, COMP3230: 3, MATH3301: 4, MATH3401: 5, MATH3603: 6, MATH3904: 7, COMP0297: 8
+INSERT INTO course (code, semester, academic_year, course_name, moodle_link) VALUES
+-- COMP3278 : 1, FINA1310: 2, COMP3230: 3, MATH3301: 4, MATH3401: 5, MATH3603: 6, MATH3904: 7, COMP3297: 8
 ('COMP3278', '1', '2023', 'Introduction to database management systems', 'https://moodle.hku.hk/course/view.php?id=106523'),
 ('FINA1310', '1', '2023', 'Corporate Finance', 'https://moodle.hku.hk/course/view.php?id=111971'),
 ('COMP3230', '1', '2023', 'Principles of Operating Systems', 'https://moodle.hku.hk/course/view.php?id=106508'),
@@ -14,7 +14,7 @@ INSERT INTO course (code, semester, academic_year, name, moodle_link) VALUES
 ('MATH3401', '1', '2023', 'Analysis I', 'https://moodle.hku.hk/course/view.php?id=108788'),
 ('MATH3603', '1', '2023', 'Probability Theory', 'https://webapp.science.hku.hk/sr4/servlet/enquiry?Type=Course&course_code=MATH3603'),
 ('MATH3904', '1', '2023', 'Introduction to Optimization', 'https://webapp.science.hku.hk/sr4/servlet/enquiry?Type=Course&course_code=MATH3904'),
-('COMP0297', '1', '2023', 'Software Engineering', 'https://moodle.hku.hk/course/view.php?id=106525');
+('COMP3297', '1', '2023', 'Software Engineering', 'https://moodle.hku.hk/course/view.php?id=106525');
 
 INSERT INTO takes (student_id, course_id) VALUES
 (1, 1), (1, 3), (1, 2), (1, 8),
@@ -60,7 +60,7 @@ VALUES
 (5, "I hate waking up in the morning too but I still come and teach!", "MB103", '4', '1', NULL, '2023-09-07', '2023-10-12', '09:30', '10:20'),
 (5, "I hate waking up in the morning too but I still come and teach!", "MB103", '4', '1', NULL, '2023-10-26', '2023-11-30', '09:30', '10:20'),
 
--- COMP0297 [SWE]
+-- COMP3297 [SWE]
 (8, "Zis is my startup: Una Technologies", "KB223", '5', '1', NULL, '2023-09-15', '2023-10-13', '17:30', '18:20'),
 (8, "Zis is my startup: Una Technologies", "KB223", '5', '1', NULL, '2023-11-03', '2023-11-24', '17:30', '18:20'),
 (8, "I am Leo Yeung", "KB223", '2', '1', NULL, '2023-09-05', '2023-10-10', '16:30', '18:20'),

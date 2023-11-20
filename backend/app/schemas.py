@@ -35,7 +35,7 @@ class CourseBase(BaseModel):
     code: str
     semester: str
     academic_year: str
-    name: str
+    course_name: str
     moodle_link: str
     
     # one to many relationship with note table & class table
@@ -62,3 +62,8 @@ class TakesBase(BaseModel):
     
     class Config:
         from_attributes = True
+
+class EmailData(BaseModel):
+    class_id: int
+    course_id: int
+    class_date: str

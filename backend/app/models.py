@@ -54,7 +54,7 @@ class Course(Base):
     semester = Column(String(64), nullable=False)
     academic_year = Column(String(64), nullable=False)
     offer_in = composite(Offer_in, semester, academic_year)
-    name = Column(String(128), nullable=False)
+    course_name = Column(String(128), nullable=False)
     moodle_link = Column(String(128), nullable=False)
     
     # notes is a multi-valued attribute of Course
