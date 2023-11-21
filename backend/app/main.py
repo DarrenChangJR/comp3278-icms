@@ -1,6 +1,3 @@
-from datetime import datetime
-import json
-
 from typing import Annotated
 
 from fastapi import FastAPI, Depends, HTTPException, status, Response
@@ -12,7 +9,7 @@ from sqlalchemy.orm import Session
 import app.models as models
 from app.FaceRecognition.faces import recognise_face
 from app.database import engine, SessionLocal
-from app.email_utils import send_email_info
+from app.email_utils import send_email_info, get_email_details, write_message
 from app.schemas import ImageData, CourseBase, StudentBase, TakesBase, EmailData
 from app.token_utils import create_access_token, verify_token
 
@@ -166,7 +163,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 # main page route (could be used for login?)
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "El Psy Congroo"}
 
 
 @app.post("/login")
@@ -174,7 +171,7 @@ async def login(login_request: ImageData, db: dp_dependency):
     image_data = login_request.image_data.replace("data:image/jpeg;base64,", "")
     student_id = recognise_face(image_data)
     if student_id is not None:
-        # update last_login, and last_active to be 1 minute after last_login
+        # Update last_login, and last_active to be 1 minute after last_login
         stmt = text("UPDATE student SET last_login = NOW(), last_active = NOW() + INTERVAL 1 MINUTE WHERE student_id = :student_id")
         db.execute(stmt, {"student_id":student_id})
         db.commit()
@@ -190,52 +187,30 @@ async def login(login_request: ImageData, db: dp_dependency):
 @app.post("/email-info")
 async def email_info(db: dp_dependency, email_data: EmailData, current_user: dict = Depends(get_current_user)):
     student_id = current_user.get("sub")
-    stmt_email = text("SELECT email FROM student WHERE student_id = :student_id")
-    stmt_name = text("SELECT name FROM student WHERE student_id = :student_id")
-    result = db.execute(stmt_email, {"student_id":student_id}).fetchone()
-    name = db.execute(stmt_name, {"student_id":student_id}).fetchone()
-    name = name[0]
-    if result is None:
-        return {"Error": "Student not found"}
+    
+    result = db.execute(
+        text("SELECT email FROM student WHERE student_id = :student_id"), {"student_id":student_id}
+    ).fetchone()
+    
+    name = db.execute(
+        text("SELECT name FROM student WHERE student_id = :student_id"), {"student_id":student_id}
+    ).fetchone()[0]
+    
+    if result is None: return {"Error": "Student not found"}
     else:
         email = result[0]
         
         # TODO: Get the information about the class with sql query
-        class_id = int(email_data.class_id)
-        course_id = int(email_data.course_id)
-        class_date = email_data.class_date
-        content = get_student_info(db,student_id)
-        # keep the content with same class_id and course_id in content remove other
-        filtered_courses = []
-        for course in content["courses"]:
-            if course["course_id"] == course_id:
-                filtered_classes = [class_ for class_ in course["classes"] if class_["class_id"] == class_id]
-                if filtered_classes:
-                    course["classes"] = filtered_classes
-                    filtered_courses.append(course)
-        content["courses"] = filtered_courses
-        content["class_date"] = class_date
-        # change the datetime object to string
-        for course in content["courses"]:
-            for class_ in course["classes"]:
-                #strftime('%Y-%m-%d %H:%M:%S')
-                class_["start_date"] = class_["start_date"].strftime('%Y-%m-%d')
-                class_["end_date"] = class_["end_date"].strftime('%Y-%m-%d')
-                # class_["start_time"] = class_["start_time"].strftime('%H:%M:%S')
-                # class_["end_time"] = class_["end_time"].strftime('%H:%M:%S')
-        content["last_login"] = content["last_login"].strftime('%Y-%m-%d %H:%M:%S')
-        content["last_active"] = content["last_active"].strftime('%Y-%m-%d %H:%M:%S')
-        content = json.dumps(content, indent=4)
-
+        class_id, course_id, class_date = int(email_data.class_id), int(email_data.course_id), email_data.class_date
+        stdInfo = get_student_info(db,student_id)
         
+        details = get_email_details(stdInfo, class_id, course_id, class_date)
+        content = write_message(details)
 
-        title =name + "'s class information"
-        # change every datetime object to string
+        title = name + "'s class information"
+        
         try:
-            send_email_info(email,
-                            title,
-                            content
-            )
+            send_email_info(email, title, content)
             return {"Completion": "success"} 
         except Exception as e:
             print(f"An error occurred: {e}")
