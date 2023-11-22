@@ -200,7 +200,6 @@ async def email_info(db: dp_dependency, email_data: EmailData, current_user: dic
     else:
         email = result[0]
         
-        # TODO: Get the information about the class with sql query
         class_id, course_id, class_date = int(email_data.class_id), int(email_data.course_id), email_data.class_date
         stdInfo = get_student_info(db,student_id)
         
