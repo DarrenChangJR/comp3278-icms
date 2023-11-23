@@ -28,6 +28,12 @@ Takes = Table('takes', Base.metadata,
     Column('course_id', Integer, ForeignKey('course.course_id'))
 )
 
+# association table to connect the Staff and Course table
+Teaches = Table('teaches', Base.metadata,
+    Column('staff_id', Integer, ForeignKey('staff.staff_id')),
+    Column('course_id', Integer, ForeignKey('course.course_id'))
+)
+
 
 class Student(Base):
     #initialize the table
@@ -67,6 +73,9 @@ class Course(Base):
     # many to many relationship with student table
     has_student = relationship("Student", secondary=Takes, back_populates="take_course")
 
+    # many to many relationship with staff table
+    taught_by = relationship("Staff", secondary="teaches", back_populates="teaches")
+
 
 class Note(Base):
     __tablename__ = "note"
@@ -98,3 +107,16 @@ class Class(Base):
 
     # many to one relationship with course table
     course = relationship("Course", back_populates="classes")
+
+
+class Staff(Base):
+    __tablename__ = "staff"
+    staff_id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(64), nullable=False)
+    email = Column(String(64), nullable=False, unique=True)
+    role = Column(String(64), nullable=False)
+    office_location = Column(String(64), nullable=False)
+    office_hours = Column(String(64), nullable=False)
+    
+    # many to many relationship with course table
+    teaches = relationship("Course", secondary="teaches", back_populates="taught_by")

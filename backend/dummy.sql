@@ -14,10 +14,11 @@ INSERT INTO course (code, semester, academic_year, course_name, moodle_link) VAL
 ('MATH3401', '1', '2023', 'Analysis I', 'https://moodle.hku.hk/course/view.php?id=108788'),
 ('MATH3603', '1', '2023', 'Probability Theory', 'https://webapp.science.hku.hk/sr4/servlet/enquiry?Type=Course&course_code=MATH3603'),
 ('MATH3904', '1', '2023', 'Introduction to Optimization', 'https://webapp.science.hku.hk/sr4/servlet/enquiry?Type=Course&course_code=MATH3904'),
-('COMP3297', '1', '2023', 'Software Engineering', 'https://moodle.hku.hk/course/view.php?id=106525');
+('COMP3297', '1', '2023', 'Software Engineering', 'https://moodle.hku.hk/course/view.php?id=106525'),
+('FAKE6666', '1', '2023', 'Fake Course', 'https://moodle.hku.hk/course/view.php?id=106525');
 
 INSERT INTO takes (student_id, course_id) VALUES
-(1, 1), (1, 2), (1, 3), (1, 8),
+(1, 1), (1, 2), (1, 3), (1, 8), (1, 9),
 (2, 1), (2, 6), (2, 7),
 (3, 1), (3, 3), (3, 8),
 (4, 1), (4, 3), (4, 4), (4, 5), (1, 8),
@@ -64,7 +65,10 @@ VALUES
 (8, "Zis is my startup: Una Technologies", "KB223", '5', '1', NULL, '2023-09-15', '2023-10-13', '17:30', '18:20'),
 (8, "Zis is my startup: Una Technologies", "KB223", '5', '1', NULL, '2023-11-03', '2023-11-24', '17:30', '18:20'),
 (8, "I am Leo Yeung", "KB223", '2', '1', NULL, '2023-09-05', '2023-10-10', '16:30', '18:20'),
-(8, "I am Leo Yeung", "KB223", '2', '1', NULL, '2023-10-24', '2023-11-28', '16:30', '18:20');
+(8, "I am Leo Yeung", "KB223", '2', '1', NULL, '2023-10-24', '2023-11-28', '16:30', '18:20'),
+
+-- FAKE6666
+(9, "Gang gang gang", "Toilet", '3', '1', NULL, '2023-11-01', '2023-11-30', '21:30', '22:30');
 
 
 INSERT INTO note (course_id, title, note_link) VALUES
@@ -162,4 +166,28 @@ INSERT INTO note (course_id, title, note_link) VALUES
 (8, "Lecture 9: Software Configuration Management", "https://moodle.hku.hk/mod/resource/view.php?id=3095380"),
 (8, "Lecture 10: Software Engineering Tools", "https://moodle.hku.hk/mod/resource/view.php?id=3095380"),
 (8, "Lecture 11: Software Engineering Ethics", "https://moodle.hku.hk/mod/resource/view.php?id=3095380"),
-(8, "Lecture 12: Software Engineering in Practice", "https://moodle.hku.hk/mod/resource/view.php?id=3095380");
+(8, "Lecture 12: Software Engineering in Practice", "https://moodle.hku.hk/mod/resource/view.php?id=3095380"),
+
+(9, "Lecture 1: Scientology", "https://tom.cruise.com");
+
+-- class Staff(Base):
+--     __tablename__ = "staff"
+--     staff_id = Column(Integer, primary_key=True, index=True)
+--     name = Column(String(64), nullable=False)
+--     email = Column(String(64), nullable=False, unique=True)
+--     role = Column(String(64), nullable=False)
+--     office_location = Column(String(64), nullable=False)
+--     office_hours = Column(String(64), nullable=False)
+    
+--     # many to many relationship with course table
+--     teaches = relationship("Course", secondary="teaches", back_populates="taught_by")
+
+INSERT INTO staff (name, email, role, office_location, office_hours) VALUES
+("Dr. Luo Ping", "pluo@cs.hku.hk", "Associate Professor", "CB326", "Monday 10:00-11:00"),
+("Dr. Wu Chenshu", "chenshu@cs.hku.hk", "Assisstant Professor", "CB315B", "Monday 10:30-12:30"),
+("Dr. John Jang", "johnny@cs.hku.hk", "Senior Lecturer", "CSA", "Everyday 24/7");
+
+INSERT INTO teaches (staff_id, course_id) VALUES
+(1, 1),
+(2, 3),
+(3, 2), (3, 4), (3, 5), (3, 6), (3, 7), (3, 8), (3, 9);
