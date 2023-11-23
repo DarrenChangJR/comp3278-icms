@@ -60,11 +60,14 @@ def get_student_info(db: dp_dependency, student_id):
             student.*, 
             course.*, 
             class.*, 
-            note.*
+            note.*,
+            staff.*
         FROM 
             student
         INNER JOIN takes ON student.student_id = takes.student_id
         INNER JOIN course ON takes.course_id = course.course_id
+        INNER JOIN teaches ON course.course_id = teaches.course_id
+        LEFT JOIN staff ON teaches.staff_id = staff.staff_id
         LEFT JOIN class ON course.course_id = class.course_id
         LEFT JOIN note ON course.course_id = note.course_id
         WHERE 
@@ -93,9 +96,11 @@ def get_student_info(db: dp_dependency, student_id):
                 "course_name": row['course_name'],
                 "moodle_link": row['moodle_link'],
                 "classes": [],
+                "staffs": [],
                 "notes": [],
                 "note_ids": set(),
                 "class_ids": set(),
+                "staff_ids": set()
             }
 
         class_id = row['class_id']
@@ -122,6 +127,18 @@ def get_student_info(db: dp_dependency, student_id):
                 "start_time": start_time,
                 "end_time": end_time
             })
+            
+        staff_id = row['staff_id']
+        if staff_id not in courses[course_id]['staff_ids']:
+            courses[course_id]['staff_ids'].add(staff_id)
+            courses[course_id]['staffs'].append({
+                "staff_id": row['staff_id'],
+                "staff_name": row['staff_name'],
+                "staff_email": row['staff_email'],
+                "role": row['role'],
+                "office_location": row['office_location'],
+                "office_hours": row['office_hours']
+            })
 
         note_id = row['note_id']
         if note_id not in courses[course_id]['note_ids']:
@@ -137,7 +154,9 @@ def get_student_info(db: dp_dependency, student_id):
     for course in courses.values():
         del course['note_ids']
         del course['class_ids']
-
+        del course['staff_ids']
+        
+    print(courses)
     return {
         "student_id": row['student_id'],
         "name": row['name'],

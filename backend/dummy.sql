@@ -170,19 +170,8 @@ INSERT INTO note (course_id, title, note_link) VALUES
 
 (9, "Lecture 1: Scientology", "https://tom.cruise.com");
 
--- class Staff(Base):
---     __tablename__ = "staff"
---     staff_id = Column(Integer, primary_key=True, index=True)
---     name = Column(String(64), nullable=False)
---     email = Column(String(64), nullable=False, unique=True)
---     role = Column(String(64), nullable=False)
---     office_location = Column(String(64), nullable=False)
---     office_hours = Column(String(64), nullable=False)
-    
---     # many to many relationship with course table
---     teaches = relationship("Course", secondary="teaches", back_populates="taught_by")
 
-INSERT INTO staff (name, email, role, office_location, office_hours) VALUES
+INSERT INTO staff (staff_name, staff_email, role, office_location, office_hours) VALUES
 ("Dr. Luo Ping", "pluo@cs.hku.hk", "Associate Professor", "CB326", "Monday 10:00-11:00"),
 ("Dr. Wu Chenshu", "chenshu@cs.hku.hk", "Assisstant Professor", "CB315B", "Monday 10:30-12:30"),
 ("Dr. John Jang", "johnny@cs.hku.hk", "Senior Lecturer", "CSA", "Everyday 24/7");
