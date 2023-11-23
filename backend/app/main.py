@@ -156,7 +156,6 @@ def get_student_info(db: dp_dependency, student_id):
         del course['class_ids']
         del course['staff_ids']
         
-    print(courses)
     return {
         "student_id": row['student_id'],
         "name": row['name'],
