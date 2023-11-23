@@ -8,6 +8,7 @@ import {
   Typography,
   useTheme,
   Button,
+  Grid,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
@@ -36,7 +37,7 @@ const ClassCard = ({ class_, shouldOpen }) => {
         class_id: class_.class_id,
         course_id: class_.course_id,
         class_date: class_.class_date,
-      })
+      }),
     })
       .then((res) => {
         return res.json()
@@ -133,14 +134,37 @@ const ClassCard = ({ class_, shouldOpen }) => {
               Zoom
             </Button>
           </Box>
-          <Box mb={-1}>
-            <Typography variant="h6">Teacher's Message:</Typography>
-          </Box>
-          <Box component="span" sx={{ textIndent: '2em' }}>
-            <Typography variant="body1" gutterBottom>
-              <em>"{class_.teacher_message}"</em>
-            </Typography>
-          </Box>
+          {/* display main staff's information such as name, email, office_location, and office_hours */}
+          <Grid container>
+            <Grid item xs={6}>
+              <Box mb={-1}>
+                <Typography variant="h6">
+                  {class_.staffs[0].staff_name}
+                </Typography>
+              </Box>
+              <Box mb={-1}>
+                <Box component="span" sx={{ textIndent: '2em' }}>
+                  <Typography variant="subtitle1" color="textSecondary">
+                    {class_.staffs[0].staff_email}
+                  </Typography>
+                </Box>
+              </Box>
+              <Box component="span" sx={{ textIndent: '2em' }}>
+                <Typography variant="subtitle1" color="textSecondary">
+                  {class_.staffs[0].office_hours} (
+                  {class_.staffs[0].office_location})
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={6}>
+              <Box mb={-1}>
+                <Typography variant="h6">Teacher's Message:</Typography>
+              </Box>
+              <Typography variant="subtitle1" color="textSecondary" gutterBottom>
+                <em>"{class_.teacher_message}"</em>
+              </Typography>
+            </Grid>
+          </Grid>
           <Typography variant="h6" gutterBottom>
             Notes
           </Typography>

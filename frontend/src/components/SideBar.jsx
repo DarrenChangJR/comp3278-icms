@@ -62,7 +62,7 @@ const SideBar = ({ drawerOpen, handleClose, studentInfo }) => {
             </IconButton>
           </Box>
         )}
-        <Typography variant="h4">Hello {studentInfo.name}</Typography>
+        <Typography variant="h4">Hello, {studentInfo.name}</Typography>
         <Typography variant="caption">
           Login Time: <br />
           {new Date(studentInfo.last_login).toLocaleDateString() +
