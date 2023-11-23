@@ -112,8 +112,8 @@ class Class(Base):
 class Staff(Base):
     __tablename__ = "staff"
     staff_id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(64), nullable=False)
-    email = Column(String(64), nullable=False, unique=True)
+    staff_name = Column(String(64), nullable=False)
+    staff_email = Column(String(64), nullable=False, unique=True)
     role = Column(String(64), nullable=False)
     office_location = Column(String(64), nullable=False)
     office_hours = Column(String(64), nullable=False)
